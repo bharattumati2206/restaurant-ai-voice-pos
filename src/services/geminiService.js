@@ -1,19 +1,16 @@
-import { GoogleGenAI } from "@google/genai";
-
-const ai = new GoogleGenAI({
-  apiKey: process.env.NEXT_PUBLIC_GEMINI_API_KEY,
-});
-
 export async function askGemini(prompt) {
-  try {
-    const response = await ai.models.generateContent({
-      model: "gemini-flash-latest",
-      contents: prompt,
-    });
+  const response = await fetch("/api/gemini", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ prompt }),
+  });
 
-    return response.text;
-  } catch (error) {
-    console.error("Gemini Error:", error);
-    throw error;
+  if(!response.ok) {
+    throw new Error("Failed to contact Gemini API");
   }
+
+  const data = await response.json();
+  return data.text;
 }

@@ -5,6 +5,8 @@ import { tables } from "@/mock/tables";
 import { menu } from "@/mock/menu";
 
 import orderService from "@/services/orderService";
+import paymentService from "@/services/paymentService";
+import speechService from "@/services/speechService";
 
 import { TOOLS } from "./tools";
 
@@ -47,77 +49,119 @@ function findCategory(categoryName) {
 export async function executePlan(plan) {
   const store = usePosStore.getState();
 
-  const addTimeline = store.addTimeline;
+  // Speak overall plan once
+  if (plan.summary) {
+    speechService.summarize(plan.summary);
+  }
 
   for (const step of plan.steps) {
     switch (step.tool) {
       case TOOLS.LOGIN: {
-        addTimeline("🔐 Logging in...", "thinking");
+        speechService.announce({
+          timeline: "🔐 Logging in...",
+          speech: "Logging you in.",
+          type: "thinking",
+        });
 
         const employee = employees.find((e) => e.pin === step.arguments.pin);
 
         if (!employee) {
-          addTimeline("❌ Invalid PIN.", "error");
+          speechService.announce({
+            timeline: "❌ Invalid PIN.",
+            speech: "Sorry, the PIN is invalid.",
+            type: "error",
+          });
+
           break;
         }
 
         store.login(employee);
 
-        addTimeline(`✅ Logged in as ${employee.name}.`, "success");
+        speechService.announce({
+          timeline: `✅ Logged in as ${employee.name}.`,
+          speech: `Welcome ${employee.name}.`,
+          type: "success",
+        });
 
         break;
       }
 
       case TOOLS.OPEN_TABLE: {
-        addTimeline(`🪑 Opening Table ${step.arguments.table}...`, "thinking");
+        speechService.announce({
+          timeline: `🪑 Opening Table ${step.arguments.table}...`,
+          speech: `Opening Table ${step.arguments.table}.`,
+          type: "thinking",
+        });
 
         const table = tables.find((t) => t.id === step.arguments.table);
 
         if (!table) {
-          addTimeline("❌ Table not found.", "error");
+          speechService.announce({
+            timeline: "❌ Table not found.",
+            speech: "Sorry, I couldn't find that table.",
+            type: "error",
+          });
+
           break;
         }
 
         store.selectTable(table);
 
-        addTimeline(`✅ Opened ${table.name}.`, "success");
+        speechService.announce({
+          timeline: `✅ Opened ${table.name}.`,
+          speech: `${table.name} is ready.`,
+          type: "success",
+        });
 
         break;
       }
 
       case TOOLS.SELECT_CATEGORY: {
-        addTimeline(`📂 Opening ${step.arguments.category}...`, "thinking");
+        speechService.announce({
+          timeline: `📂 Opening ${step.arguments.category}...`,
+          speech: `Opening ${step.arguments.category}.`,
+          type: "thinking",
+        });
 
         const category = findCategory(step.arguments.category);
 
         if (!category) {
-          addTimeline(
-            `❌ Category "${step.arguments.category}" not found.`,
-            "error",
-          );
+          speechService.announce({
+            timeline: `❌ Category "${step.arguments.category}" not found.`,
+            speech: `Sorry, I couldn't find the ${step.arguments.category} category.`,
+            type: "error",
+          });
+
           break;
         }
 
         store.setSelectedCategory(category);
 
-        addTimeline(`✅ Switched to ${category}.`, "success");
+        speechService.announce({
+          timeline: `✅ Switched to ${category}.`,
+          speech: `${category} menu is open.`,
+          type: "success",
+        });
 
         break;
       }
 
       case TOOLS.ADD_ITEM: {
-        addTimeline(
-          `🍽 Adding ${step.arguments.quantity} ${step.arguments.item}...`,
-          "thinking",
-        );
+        speechService.announce({
+          timeline: `🍽 Adding ${step.arguments.quantity} ${step.arguments.item}...`,
+          speech: `Adding ${step.arguments.quantity} ${step.arguments.item}.`,
+          type: "thinking",
+        });
 
         const item = findMenuItem(step.arguments.item);
 
         if (!item) {
-          addTimeline(
-            `❌ Menu item "${step.arguments.item}" not found.`,
-            "error",
-          );
+          speechService.announce({
+            timeline: `❌ Menu item "${step.arguments.item}" not found.`,
+            speech: `Sorry, I couldn't find ${step.arguments.item}.`,
+            type: "error",
+          });
+
           break;
         }
 
@@ -125,24 +169,30 @@ export async function executePlan(plan) {
           orderService.addItem(item);
         }
 
-        addTimeline(
-          `✅ Added ${step.arguments.quantity} × ${item.name}.`,
-          "success",
-        );
+        speechService.announce({
+          timeline: `✅ Added ${step.arguments.quantity} × ${item.name}.`,
+          speech: `${step.arguments.quantity} ${item.name} added.`,
+          type: "success",
+        });
 
         break;
       }
-
       case TOOLS.REMOVE_ITEM: {
-        addTimeline(`🗑 Removing ${step.arguments.item}...`, "thinking");
+        speechService.announce({
+          timeline: `🗑 Removing ${step.arguments.quantity} ${step.arguments.item}...`,
+          speech: `Removing ${step.arguments.quantity} ${step.arguments.item}.`,
+          type: "thinking",
+        });
 
         const item = findMenuItem(step.arguments.item);
 
         if (!item) {
-          addTimeline(
-            `❌ Menu item "${step.arguments.item}" not found.`,
-            "error",
-          );
+          speechService.announce({
+            timeline: `❌ Menu item "${step.arguments.item}" not found.`,
+            speech: `Sorry, I couldn't find ${step.arguments.item}.`,
+            type: "error",
+          });
+
           break;
         }
 
@@ -150,36 +200,117 @@ export async function executePlan(plan) {
           orderService.removeItem(item.id);
         }
 
-        addTimeline(
-          `✅ Removed ${step.arguments.quantity} × ${item.name}.`,
-          "success",
-        );
+        speechService.announce({
+          timeline: `✅ Removed ${step.arguments.quantity} × ${item.name}.`,
+          speech: `${step.arguments.quantity} ${item.name} removed.`,
+          type: "success",
+        });
 
         break;
       }
 
       case TOOLS.CLEAR_CART: {
-        addTimeline("🧹 Clearing cart...", "thinking");
+        speechService.announce({
+          timeline: "🧹 Clearing cart...",
+          speech: "Clearing your cart.",
+          type: "thinking",
+        });
 
         orderService.clear();
 
-        addTimeline("✅ Cart cleared.", "success");
+        speechService.announce({
+          timeline: "✅ Cart cleared.",
+          speech: "Your cart has been cleared.",
+          type: "success",
+        });
 
         break;
       }
 
       case TOOLS.CHECKOUT: {
-        addTimeline("💳 Checkout started...", "thinking");
+        speechService.announce({
+          timeline: "💳 Opening Checkout...",
+          speech: "Opening checkout.",
+          type: "thinking",
+        });
 
-        // Checkout implementation later
+        const currentState = usePosStore.getState();
 
-        addTimeline("✅ Checkout completed.", "success");
+        if (!currentState.selectedTable) {
+          speechService.announce({
+            timeline: "❌ Please open a table first.",
+            speech: "Please open a table first.",
+            type: "error",
+          });
+
+          break;
+        }
+
+        if (currentState.cart.length === 0) {
+          speechService.announce({
+            timeline: "❌ Cart is empty.",
+            speech: "Your cart is empty.",
+            type: "error",
+          });
+
+          break;
+        }
+
+        currentState.navigate("CHECKOUT");
+
+        speechService.announce({
+          timeline: "✅ Checkout screen opened.",
+          speech: "Checkout is ready.",
+          type: "success",
+        });
+
+        break;
+      }
+
+      case TOOLS.PAY: {
+        speechService.announce({
+          timeline: "💳 Starting payment...",
+          speech: "Processing your payment.",
+          type: "thinking",
+        });
+
+        const state = usePosStore.getState();
+
+        if (state.currentScreen !== "CHECKOUT") {
+          speechService.announce({
+            timeline: "❌ Payment can only be made from Checkout.",
+            speech: "Payment can only be made from the checkout screen.",
+            type: "error",
+          });
+
+          break;
+        }
+
+        if (state.cart.length === 0) {
+          speechService.announce({
+            timeline: "❌ Cart is empty.",
+            speech: "Your cart is empty.",
+            type: "error",
+          });
+
+          break;
+        }
+
+        await paymentService.pay();
+
+        speechService.say("Done. Your payment was successful.");
 
         break;
       }
 
       default: {
-        addTimeline(`❌ Unknown tool: ${step.tool}`, "error");
+        speechService.announce({
+          timeline: `❌ Unknown tool: ${step.tool}`,
+          speech: "Sorry, I don't know how to perform that action.",
+          type: "error",
+        });
+
+        break;
       }
     }
   }

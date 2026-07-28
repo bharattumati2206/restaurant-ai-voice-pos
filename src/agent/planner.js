@@ -2,6 +2,62 @@ import { askGemini } from "@/services/geminiService";
 import { menu } from "@/mock/menu";
 import { TOOLS } from "./tools";
 
+/**
+ * --------------------------------------------------
+ * Builds a spoken summary of the execution plan
+ * --------------------------------------------------
+ */
+function buildPlanSummary(steps) {
+  if (!steps?.length) {
+    return "Okay. I'll take care of that.";
+  }
+
+  const actions = [];
+
+  for (const step of steps) {
+    switch (step.tool) {
+      case TOOLS.LOGIN:
+        actions.push("log you in");
+        break;
+
+      case TOOLS.OPEN_TABLE:
+        actions.push(`open Table ${step.arguments.table}`);
+        break;
+
+      case TOOLS.SELECT_CATEGORY:
+        actions.push(`open the ${step.arguments.category} menu`);
+        break;
+
+      case TOOLS.ADD_ITEM:
+        actions.push(`add ${step.arguments.quantity} ${step.arguments.item}`);
+        break;
+
+      case TOOLS.REMOVE_ITEM:
+        actions.push(
+          `remove ${step.arguments.quantity} ${step.arguments.item}`,
+        );
+        break;
+
+      case TOOLS.CLEAR_CART:
+        actions.push("clear the cart");
+        break;
+
+      case TOOLS.CHECKOUT:
+        actions.push("proceed to checkout");
+        break;
+
+      case TOOLS.PAY:
+        actions.push("complete the payment");
+        break;
+
+      default:
+        break;
+    }
+  }
+
+  return `Okay. I'll ${actions.join(", ")}.`;
+}
+
 export async function planCommand(command) {
   const availableTools = Object.values(TOOLS)
     .map((tool) => `- ${tool}`)
@@ -569,6 +625,38 @@ Response:
 
 --------------------------------------------------
 
+PAY
+
+Use when the user says:
+
+- pay
+- make payment
+- pay now
+- complete payment
+- finish payment
+- confirm payment
+- charge customer
+
+Arguments:
+{}
+
+User:
+Login with 1234, open table 4, add one cheeseburger, checkout and pay.
+
+Plan:
+
+LOGIN
+
+OPEN_TABLE
+
+SELECT_CATEGORY
+
+ADD_ITEM
+
+CHECKOUT
+
+PAY
+
 User Command:
 
 ${command}
@@ -589,6 +677,8 @@ ${command}
       throw new Error("Invalid plan format");
     }
 
+    plan.summary = buildPlanSummary(plan.steps);
+
     return plan;
   } catch (error) {
     console.error("Failed to parse Gemini response:");
@@ -596,6 +686,7 @@ ${command}
     console.error(response);
 
     return {
+      summary: "",
       steps: [],
     };
   }

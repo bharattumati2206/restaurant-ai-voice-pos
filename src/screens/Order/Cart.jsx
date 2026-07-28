@@ -6,6 +6,10 @@ import orderService from "@/services/orderService";
 import { ShoppingCart, Trash2, Plus, Minus, CreditCard } from "lucide-react";
 
 export default function Cart() {
+  const navigate = usePosStore((state) => state.navigate);
+  const addTimeline = usePosStore((state) => state.addTimeline);
+  const selectedTable = usePosStore((state) => state.selectedTable);
+
   const cart = usePosStore((state) => state.cart);
 
   const total = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
@@ -117,7 +121,30 @@ export default function Cart() {
           Clear Order
         </button>
 
-        <button className="flex w-full items-center justify-center gap-2 rounded-xl bg-emerald-600 py-4 text-lg font-bold text-white transition hover:bg-emerald-700">
+        <button
+          disabled={cart.length === 0}
+          onClick={() => {
+            if (!selectedTable) {
+              addTimeline("❌ Please select a table first.", "error");
+              return;
+            }
+
+            addTimeline("💳 Opening Checkout...", "thinking");
+
+            navigate("CHECKOUT");
+
+            addTimeline("✅ Checkout screen opened.", "success");
+          }}
+          className={`
+    flex w-full items-center justify-center gap-2 rounded-xl py-4
+    text-lg font-bold text-white transition
+    ${
+      cart.length === 0
+        ? "cursor-not-allowed bg-slate-600 opacity-50"
+        : "bg-emerald-600 hover:bg-emerald-700"
+    }
+  `}
+        >
           <CreditCard size={20} />
           Checkout
         </button>

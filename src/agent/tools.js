@@ -12,4 +12,6 @@ export const TOOLS = {
   CLEAR_CART: "CLEAR_CART",
 
   CHECKOUT: "CHECKOUT",
+
+  PAY: "PAY",
 };

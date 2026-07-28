@@ -5,6 +5,7 @@ import usePosStore from "../store/usePosStore";
 import LoginScreen from "../screens/Login/LoginScreen";
 import TableScreen from "../screens/Tables/TablesScreen";
 import OrderScreen from "../screens/Order/OrderScreen";
+import CheckoutScreen from "../screens/Checkout/CheckoutScreen";
 
 import VoiceButton from "../voice/VoiceButton";
 import AITimeline from "../timeline/AITimeline";
@@ -19,6 +20,7 @@ export default function AppShell() {
       {currentScreen === "LOGIN" && <LoginScreen />}
       {currentScreen === "TABLES" && <TableScreen />}
       {currentScreen === "ORDER" && <OrderScreen />}
+      {currentScreen === "CHECKOUT" && <CheckoutScreen />}
 
       <AITimeline />
       <VoiceButton />

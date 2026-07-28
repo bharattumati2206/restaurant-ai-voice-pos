@@ -29,7 +29,7 @@ async function askGeminiProvider(prompt) {
   });
 
   const response = await ai.models.generateContent({
-    model: process.env.NEXT_PUBLIC_GEMINI_MODEL || "gemini-2.5-flash",
+    model: process.env.NEXT_PUBLIC_GEMINI_MODEL || "gemini-3.6-flash",
     contents: prompt,
   });
 

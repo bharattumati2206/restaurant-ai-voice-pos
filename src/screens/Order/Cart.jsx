@@ -2,8 +2,9 @@
 
 import usePosStore from "@/store/usePosStore";
 import orderService from "@/services/orderService";
-
+import { updateTableStatus } from "../../services/tableService";
 import { ShoppingCart, Trash2, Plus, Minus, CreditCard } from "lucide-react";
+import { createCheck } from "../../services/checkService";
 
 export default function Cart() {
   const navigate = usePosStore((state) => state.navigate);
@@ -13,6 +14,11 @@ export default function Cart() {
   const cart = usePosStore((state) => state.cart);
 
   const total = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
+  const setSelectedCheckTable = usePosStore(
+    (state) => state.setSelectedCheckTable,
+  );
+
+  const setActiveTableTab = usePosStore((state) => state.setActiveTableTab);
 
   return (
     <div className="flex h-full flex-col rounded-2xl border border-slate-700 bg-slate-900 shadow-xl">
@@ -129,11 +135,20 @@ export default function Cart() {
               return;
             }
 
-            addTimeline("💳 Opening Checkout...", "thinking");
+            addTimeline("📤 Sending order to kitchen...", "thinking");
 
-            navigate("CHECKOUT");
+            createCheck(selectedTable, cart);
 
-            addTimeline("✅ Checkout screen opened.", "success");
+            updateTableStatus(selectedTable.id, "OCCUPIED");
+
+            setSelectedCheckTable(selectedTable);
+            setActiveTableTab("OPEN_CHECKS");
+
+            orderService.clear();
+
+            navigate("TABLES");
+
+            addTimeline("✅ Order sent to kitchen.", "success");
           }}
           className={`
     flex w-full items-center justify-center gap-2 rounded-xl py-4
@@ -146,7 +161,7 @@ export default function Cart() {
   `}
         >
           <CreditCard size={20} />
-          Checkout
+          Send to Kitchen
         </button>
       </div>
     </div>

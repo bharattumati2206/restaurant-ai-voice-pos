@@ -145,6 +145,26 @@ const usePosStore = create((set) => ({
       currentScreen: "ORDER",
     }),
 
+  activeTableTab: "TABLES",
+
+  setActiveTableTab: (tab) =>
+    set({
+      activeTableTab: tab,
+    }),
+
+  selectedCheckTable: null,
+
+  setSelectedCheckTable: (table) =>
+    set({
+      selectedCheckTable: table,
+    }),
+
+  selectedCheckoutCheck: null,
+  setSelectedCheckoutCheck: (check) =>
+    set({
+      selectedCheckoutCheck: check,
+    }),
+
   //==========================================
   // Cart Actions
   //==========================================

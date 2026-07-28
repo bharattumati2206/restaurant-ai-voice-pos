@@ -2,11 +2,13 @@
 
 import usePosStore from "@/store/usePosStore";
 import { ChefHat, User, ReceiptText, Clock3, LogOut } from "lucide-react";
+import orderService from "../../services/orderService";
 
 export default function OrderHeader() {
   const employee = usePosStore((s) => s.currentEmployee);
   const table = usePosStore((s) => s.selectedTable);
   const logout = usePosStore((s) => s.logout);
+  const navigate = usePosStore((s) => s.navigate);
 
   const time = new Date().toLocaleTimeString([], {
     hour: "2-digit",
@@ -24,7 +26,7 @@ export default function OrderHeader() {
 
         <div>
           <h1 className="text-2xl font-bold tracking-wide text-white">
-            Darden Restaurant AI POS
+            Restaurant AI POS
           </h1>
 
           <p className="text-sm text-slate-400">
@@ -49,7 +51,13 @@ export default function OrderHeader() {
 
         {/* Table */}
 
-        <div className="rounded-xl bg-blue-600 px-5 py-2 shadow-md">
+        <div
+          onClick={() => {
+            orderService.clear();
+            navigate("TABLES");
+          }}
+          className="cursor-pointer rounded-xl bg-blue-600 px-5 py-2 shadow-md transition hover:bg-blue-700"
+        >
           <div className="flex items-center gap-2 text-xs uppercase tracking-wider text-blue-100">
             <ReceiptText size={14} />
             Table
@@ -62,8 +70,8 @@ export default function OrderHeader() {
 
         {/* Employee */}
 
-        <div className="rounded-xl bg-emerald-600 px-5 py-2 shadow-md">
-          <div className="flex items-center gap-2 text-xs uppercase tracking-wider text-emerald-100">
+        <div className="rounded-xl bg-yellow-600 px-5 py-2 shadow-md">
+          <div className="flex items-center gap-2 text-xs uppercase tracking-wider text-yellow-100">
             <User size={14} />
             Cashier
           </div>

@@ -4,23 +4,28 @@ import { useMemo, useState } from "react";
 
 import usePosStore from "../../store/usePosStore";
 import paymentService from "../../services/paymentService";
-
+import { closeCheck, hasOpenChecks } from "../../services/checkService";
+import { updateTableStatus } from "../../services/tableService";
 import { ArrowLeft, CreditCard, CheckCircle2, QrCode } from "lucide-react";
 
 const TAX_PERCENTAGE = 5;
 
 export default function CheckoutScreen() {
   const [processing, setProcessing] = useState(false);
-
-  const cart = usePosStore((s) => s.cart);
-  const selectedTable = usePosStore((s) => s.selectedTable);
-
   const navigate = usePosStore((s) => s.navigate);
   const addTimeline = usePosStore((s) => s.addTimeline);
+  const check = usePosStore((s) => s.selectedCheckoutCheck);
 
   const subtotal = useMemo(() => {
-    return cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
-  }, [cart]);
+    if (!check) {
+      return 0;
+    }
+
+    return check.items.reduce(
+      (sum, item) => sum + item.price * item.quantity,
+      0,
+    );
+  }, [check]);
 
   const tax = useMemo(() => {
     return subtotal * (TAX_PERCENTAGE / 100);
@@ -31,7 +36,7 @@ export default function CheckoutScreen() {
   }, [subtotal, tax]);
 
   const handleCancel = () => {
-    navigate("ORDER");
+    navigate("TABLES");
   };
 
   const handlePayment = async () => {
@@ -41,7 +46,17 @@ export default function CheckoutScreen() {
 
     await paymentService.pay();
 
+    // Close the selected check
+    closeCheck(check.id);
+
+    // If no more open checks exist, free the table
+    if (!hasOpenChecks(check.tableId)) {
+      updateTableStatus(check.tableId, "AVAILABLE");
+    }
+
     setProcessing(false);
+
+    navigate("TABLES");
   };
 
   return (
@@ -71,14 +86,14 @@ export default function CheckoutScreen() {
 
         <div className="rounded-xl border border-slate-800 bg-slate-900 p-6">
           <h2 className="mb-4 text-xl font-semibold">
-            {selectedTable?.name ?? "No Table"}
+            {check?.tableName ?? "No Table"}
           </h2>
 
           <div className="space-y-3">
-            {cart.length === 0 ? (
+            {!check || check.items.length === 0 ? (
               <p className="text-slate-400">No items in current order.</p>
             ) : (
-              cart.map((item) => (
+              check.items.map((item) => (
                 <div
                   key={item.id}
                   className="flex items-center justify-between border-b border-slate-800 pb-3"
@@ -140,7 +155,7 @@ export default function CheckoutScreen() {
           </p>
 
           <button
-            disabled={processing || cart.length === 0}
+            disabled={processing || !check || check.items.length === 0}
             onClick={handlePayment}
             className="mt-10 flex w-full items-center justify-center gap-2 rounded-lg bg-green-600 py-4 text-lg font-semibold transition hover:bg-green-700 disabled:cursor-not-allowed disabled:opacity-50"
           >

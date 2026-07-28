@@ -13,8 +13,6 @@ const paymentService = {
     store.addTimeline("🧾 Order Completed", "success");
 
     orderService.clear();
-
-    store.navigate("TABLES");
   },
 };
 

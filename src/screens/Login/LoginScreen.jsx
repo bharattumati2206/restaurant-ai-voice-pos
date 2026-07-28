@@ -56,7 +56,7 @@ export default function LoginScreen() {
       <header className="h-16 border-b border-slate-700 bg-slate-950 flex items-center justify-between px-8">
         <div>
           <h1 className="text-white text-xl font-semibold">
-            Darden Restaurant AI POS
+            Restaurant AI POS
           </h1>
 
           <p className="text-xs text-slate-400">Employee Login</p>

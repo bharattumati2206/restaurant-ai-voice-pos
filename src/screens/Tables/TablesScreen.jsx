@@ -140,7 +140,9 @@ export default function TableScreen() {
   };
 
   const selectedOpenCheck = openChecks.find((c) => c.id === selectedCheckId);
-  const selectedClosedCheck = closedChecks.find((c) => c.id === selectedClosedCheckId);
+  const selectedClosedCheck = closedChecks.find(
+    (c) => c.id === selectedClosedCheckId,
+  );
 
   return (
     <div className="h-screen bg-gradient-to-b from-[#0F141C] via-[#0A0D14] to-[#07090E] flex flex-col overflow-hidden select-none">
@@ -156,7 +158,9 @@ export default function TableScreen() {
               Restaurant AI POS
             </h1>
 
-            <p className="text-[11px] text-slate-400 font-medium">Floor Dining & Open Checks</p>
+            <p className="text-[11px] text-slate-400 font-medium">
+              Floor Dining & Open Checks
+            </p>
           </div>
         </div>
 
@@ -171,7 +175,9 @@ export default function TableScreen() {
               Time
             </div>
 
-            <div className="mt-0.5 text-xs font-bold text-slate-200">{time}</div>
+            <div className="mt-0.5 text-xs font-bold text-slate-200">
+              {time}
+            </div>
           </div>
 
           {/* Cashier */}
@@ -277,7 +283,7 @@ export default function TableScreen() {
                 table={table}
                 onClick={() => {
                   // Dirty Table
-                  if (table.status === "DIRTY") {
+                  if (table.status === "Not Ready") {
                     setShowDirtyModal(true);
                     return;
                   }
@@ -442,10 +448,11 @@ export default function TableScreen() {
                           className={`
   cursor-pointer transition
 
-  ${selectedCheckId === check.id
-                              ? "bg-blue-600/20 border-l-4 border-blue-500"
-                              : "hover:bg-slate-800/60"
-                            }
+  ${
+    selectedCheckId === check.id
+      ? "bg-blue-600/20 border-l-4 border-blue-500"
+      : "hover:bg-slate-800/60"
+  }
   `}
                         >
                           <td className="py-2.5 font-semibold text-white">
@@ -515,10 +522,12 @@ export default function TableScreen() {
                     <p className="text-[11px] text-slate-400 mt-0.5">
                       Closed:{" "}
                       {selectedClosedCheck.closedAt
-                        ? new Date(selectedClosedCheck.closedAt).toLocaleTimeString(
-                          [],
-                          { hour: "2-digit", minute: "2-digit" },
-                        )
+                        ? new Date(
+                            selectedClosedCheck.closedAt,
+                          ).toLocaleTimeString([], {
+                            hour: "2-digit",
+                            minute: "2-digit",
+                          })
                         : "--"}
                     </p>
                   </div>
@@ -609,17 +618,20 @@ export default function TableScreen() {
                           className={`
   cursor-pointer transition
 
-  ${selectedClosedCheckId === check.id
-                              ? "bg-slate-800/80 border-l-4 border-slate-400"
-                              : "hover:bg-slate-800/40"
-                            }
+  ${
+    selectedClosedCheckId === check.id
+      ? "bg-slate-800/80 border-l-4 border-slate-400"
+      : "hover:bg-slate-800/40"
+  }
   `}
                         >
                           <td className="py-2.5 font-semibold text-white">
                             {check.id}
                           </td>
 
-                          <td className="py-2.5 text-slate-300">{check.tableName}</td>
+                          <td className="py-2.5 text-slate-300">
+                            {check.tableName}
+                          </td>
 
                           <td className="py-2.5 text-slate-300">
                             {check.items.length} item(s)

@@ -15,7 +15,7 @@ const styles = {
     glow: "hover:shadow-amber-950/40",
   },
 
-  DIRTY: {
+  "Not Ready": {
     border: "border-rose-500/40 hover:border-rose-400",
     badge: "bg-rose-500 text-rose-950",
     pill: "bg-rose-500/20 text-rose-300 border border-rose-500/30",
@@ -60,9 +60,13 @@ export default function TableCard({ table, onClick }) {
     >
       <div className="flex h-full flex-col justify-between">
         <div className="flex items-center justify-between">
-          <div className="text-lg font-bold text-white tracking-wide">{table.name}</div>
+          <div className="text-lg font-bold text-white tracking-wide">
+            {table.name}
+          </div>
 
-          <div className={`h-2.5 w-2.5 rounded-full ${style.badge} animate-pulse`} />
+          <div
+            className={`h-2.5 w-2.5 rounded-full ${style.badge} animate-pulse`}
+          />
         </div>
 
         <div>

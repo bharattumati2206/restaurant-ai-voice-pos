@@ -178,9 +178,9 @@ export async function executePlan(plan) {
           break;
         }
 
-        if (table.status === "DIRTY") {
+        if (table.status === "Not Ready") {
           speechService.announce({
-            timeline: `⚠️ Table ${table.id} is dirty and being cleaned.`,
+            timeline: `⚠️ Table ${table.id} is not ready and being cleaned.`,
             speech: `Table ${table.id} is currently being cleaned. I'll let you know once it's ready.`,
             type: "error",
           });
@@ -257,7 +257,8 @@ export async function executePlan(plan) {
         }
 
         const isEntreeWithSides =
-          item.category === "Classic Entrees" || (item.modifiers && item.modifiers.length > 0);
+          item.category === "Classic Entrees" ||
+          (item.modifiers && item.modifiers.length > 0);
 
         // If customization screen is active, check if requested item is a side option
         if (store.customizingItem && store.customizingItem.modifiers) {
@@ -304,9 +305,15 @@ export async function executePlan(plan) {
               totalPrice += m.price;
             });
 
-            orderService.addItem(customizingItem, selectedModifiers, totalPrice);
+            orderService.addItem(
+              customizingItem,
+              selectedModifiers,
+              totalPrice,
+            );
 
-            const sideText = selectedModifiers.map((m) => m.option).join(" and ");
+            const sideText = selectedModifiers
+              .map((m) => m.option)
+              .join(" and ");
             speechService.say(
               `Certainly! I've added ${customizingItem.name} with ${sideText} to your order.`,
             );
@@ -629,7 +636,8 @@ export async function executePlan(plan) {
 
         // Filter by table if specified or currently selected
         const tableId =
-          step.arguments?.table ?? (currentState.selectedTable ? currentState.selectedTable.id : null);
+          step.arguments?.table ??
+          (currentState.selectedTable ? currentState.selectedTable.id : null);
 
         if (tableId && matchedChecks.some((c) => c.tableId === tableId)) {
           matchedChecks = matchedChecks.filter((c) => c.tableId === tableId);
@@ -786,7 +794,9 @@ export async function executePlan(plan) {
         if (!check || !check.items || check.items.length === 0) {
           const allOpen = getChecks().filter((c) => c.status === "OPEN");
           if (state.selectedTable) {
-            const tableCheck = allOpen.find((c) => c.tableId === state.selectedTable.id);
+            const tableCheck = allOpen.find(
+              (c) => c.tableId === state.selectedTable.id,
+            );
             if (tableCheck) check = tableCheck;
           }
           if (!check && allOpen.length > 0) {
@@ -803,7 +813,8 @@ export async function executePlan(plan) {
 
             speechService.announce({
               timeline: "✅ Payment completed successfully.",
-              speech: "Thank you! Your payment has been completed successfully.",
+              speech:
+                "Thank you! Your payment has been completed successfully.",
               type: "success",
             });
 
@@ -876,7 +887,9 @@ export async function executePlan(plan) {
 
         // Filter by table if specified
         if (step.arguments?.table) {
-          const tMatches = matched.filter((c) => c.tableId === step.arguments.table);
+          const tMatches = matched.filter(
+            (c) => c.tableId === step.arguments.table,
+          );
           if (tMatches.length > 0) {
             matched = tMatches;
           }

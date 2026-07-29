@@ -22,18 +22,23 @@ export async function askGemini(prompt) {
 /* -------------------------------------------------------------------------- */
 
 async function askGeminiProvider(prompt) {
-  const { GoogleGenAI } = await import("@google/genai");
+  const model = process.env.NEXT_PUBLIC_GEMINI_MODEL || "gemini-3.6-flash";
 
-  const ai = new GoogleGenAI({
-    apiKey: process.env.NEXT_PUBLIC_GEMINI_API_KEY,
+  const response = await fetch("/api/gemini", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ prompt, model }),
   });
 
-  const response = await ai.models.generateContent({
-    model: process.env.NEXT_PUBLIC_GEMINI_MODEL || "gemini-3.6-flash",
-    contents: prompt,
-  });
+  const data = await response.json();
 
-  return response.text;
+  if (!response.ok) {
+    throw new Error(data?.error || "Gemini request failed");
+  }
+
+  return data.text;
 }
 
 /* -------------------------------------------------------------------------- */

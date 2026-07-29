@@ -29,7 +29,7 @@ const usePosStore = create((set) => ({
   // Categories
   //==========================================
 
-  selectedCategory: "Burgers",
+  selectedCategory: "Appetizers",
 
   //==========================================
   // Order
@@ -43,6 +43,13 @@ const usePosStore = create((set) => ({
 
   transcript: "",
   isListening: false,
+  isSpeaking: false,
+  isAiProcessing: false,
+
+  setIsAiProcessing: (isAiProcessing) =>
+    set({
+      isAiProcessing,
+    }),
 
   //==========================================
   // AI Timeline
@@ -73,6 +80,17 @@ const usePosStore = create((set) => ({
   setSelectedCategory: (category) =>
     set({
       selectedCategory: category,
+    }),
+
+  //==========================================
+  // Sub-Item Customization State
+  //==========================================
+
+  customizingItem: null,
+
+  setCustomizingItem: (item) =>
+    set({
+      customizingItem: item,
     }),
 
   //==========================================
@@ -121,7 +139,7 @@ const usePosStore = create((set) => ({
       selectedTable: null,
 
       // Categories
-      selectedCategory: "Burgers",
+      selectedCategory: "Appetizers",
 
       // Order
       cart: [],
@@ -165,6 +183,12 @@ const usePosStore = create((set) => ({
       selectedCheckoutCheck: check,
     }),
 
+  selectedOpenCheckId: null,
+  setSelectedOpenCheckId: (id) =>
+    set({
+      selectedOpenCheckId: id,
+    }),
+
   //==========================================
   // Cart Actions
   //==========================================
@@ -182,6 +206,11 @@ const usePosStore = create((set) => ({
   //==========================================
   // Voice Actions
   //==========================================
+
+  setIsSpeaking: (isSpeaking) =>
+    set({
+      isSpeaking,
+    }),
 
   setTranscript: (transcript) =>
     set({

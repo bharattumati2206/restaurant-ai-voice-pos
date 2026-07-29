@@ -13,12 +13,36 @@ export async function POST(request) {
             return NextResponse.json({ error: "Prompt is required" }, { status: 400 });
         }
 
-        const response = await ai.models.generateContent({ model: model || "gemini-3.6-flash", contents: prompt, });
+        const targetModel = model || "gemini-2.5-flash";
 
-        return NextResponse.json({ text: response.text, });
+        const response = await ai.models.generateContent({
+            model: targetModel,
+            contents: prompt,
+        });
+
+        return NextResponse.json({ text: response.text });
     } catch (error) {
         console.error("Gemini API Error:", error);
 
-        return NextResponse.json({ error: "Failed to generate response" }, { status: 500 });
+        const errorStr = String(error?.message || error || "");
+        const isQuota =
+            error?.status === 429 ||
+            errorStr.includes("429") ||
+            errorStr.includes("quota") ||
+            errorStr.includes("Quota") ||
+            errorStr.includes("RESOURCE_EXHAUSTED") ||
+            errorStr.includes("rate");
+
+        if (isQuota) {
+            return NextResponse.json(
+                { error: "AI Quota Reached. Please wait 30 seconds." },
+                { status: 429 }
+            );
+        }
+
+        return NextResponse.json(
+            { error: error?.message || "Failed to generate response" },
+            { status: 500 }
+        );
     }
 }

@@ -1,95 +1,54 @@
 "use client";
 
-import orderService from "@/services/orderService";
-
-import {
-  Beef,
-  Drumstick,
-  Fish,
-  CookingPot,
-  CupSoda,
-  IceCream,
-  UtensilsCrossed,
-} from "lucide-react";
-
-function getIcon(category) {
-  switch (category) {
-    case "Burgers":
-      return <Beef size={30} />;
-
-    case "Chicken":
-      return <Drumstick size={30} />;
-
-    case "Steaks":
-      return <UtensilsCrossed size={30} />;
-
-    case "Seafood":
-      return <Fish size={30} />;
-
-    case "Sides":
-      return <CookingPot size={30} />;
-
-    case "Drinks":
-      return <CupSoda size={30} />;
-
-    case "Desserts":
-      return <IceCream size={30} />;
-
-    default:
-      return <CookingPot size={30} />;
-  }
-}
-
-function getColor(category) {
-  switch (category) {
-    case "Burgers":
-      return "bg-orange-500 hover:bg-orange-600";
-
-    case "Chicken":
-      return "bg-red-600 hover:bg-red-700";
-
-    case "Steaks":
-      return "bg-amber-700 hover:bg-amber-800";
-
-    case "Seafood":
-      return "bg-sky-600 hover:bg-sky-700";
-
-    case "Sides":
-      return "bg-purple-600 hover:bg-purple-700";
-
-    case "Drinks":
-      return "bg-cyan-600 hover:bg-cyan-700";
-
-    case "Desserts":
-      return "bg-pink-600 hover:bg-pink-700";
-
-    default:
-      return "bg-slate-700 hover:bg-slate-600";
-  }
-}
-
-export default function MenuItemCard({ item }) {
+export default function MenuItemCard({ item, onSelect }) {
   return (
     <button
-      onClick={() => orderService.addItem(item)}
-      className={`
-        h-28
-        rounded-2xl
-        text-white
+      onClick={() => onSelect(item)}
+      className="
+        h-24
+        w-full
+        rounded-xl
+        border
+        border-amber-500/20
+        bg-[#182030]/80
+        backdrop-blur-md
+        p-3.5
         transition-all
         duration-200
-        hover:scale-[1.03]
-        active:scale-95
-        shadow-lg
-        ${getColor(item.category)}
-      `}
+        hover:border-amber-400/60
+        hover:bg-[#202B40]
+        hover:shadow-lg
+        hover:shadow-amber-950/30
+        hover:-translate-y-0.5
+        active:scale-[0.98]
+        flex
+        flex-col
+        justify-between
+        text-left
+        group
+        select-none
+      "
     >
-      <div className="flex h-full flex-col items-center justify-center gap-3 px-3">
-        {getIcon(item.category)}
-
-        <span className="text-center text-base font-bold leading-tight">
+      <div className="flex items-center justify-between w-full">
+        <span className="text-xs font-bold leading-snug text-slate-100 group-hover:text-amber-200 transition-colors pr-2 line-clamp-2">
           {item.name}
         </span>
+
+        <span className="rounded-full bg-emerald-500/20 border border-emerald-500/30 px-2.5 py-0.5 text-[11px] font-extrabold text-emerald-300 shrink-0">
+          ${item.price.toFixed(2)}
+        </span>
+      </div>
+
+      <div className="flex items-center justify-between w-full text-[10px] text-slate-400">
+        <span className="truncate max-w-[150px]">
+          {item.modifiers?.length > 0 ? `${item.modifiers.length} option(s)` : "Standard"}
+        </span>
+
+        {item.popular && (
+          <span className="text-amber-400 font-semibold uppercase tracking-wider">
+            Popular
+          </span>
+        )}
       </div>
     </button>
   );

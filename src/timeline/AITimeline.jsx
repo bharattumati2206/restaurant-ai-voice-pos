@@ -30,30 +30,37 @@ export default function AITimeline() {
           onClick={() => setOpen(true)}
           className="
             fixed
-            bottom-8
-            left-8
+            bottom-6
+            left-6
             z-50
 
             flex
-            h-16
-            w-16
+            h-14
+            w-14
             items-center
             justify-center
 
             rounded-full
 
-            bg-violet-600
+            bg-gradient-to-r
+            from-indigo-600
+            to-violet-600
+            border
+            border-indigo-400/40
 
-            shadow-2xl
+            shadow-xl
+            shadow-indigo-950/50
 
             transition-all
-            duration-300
+            duration-200
 
             hover:scale-105
-            hover:bg-violet-700
+            hover:from-indigo-500
+            hover:to-violet-500
+            active:scale-95
           "
         >
-          <Bot size={28} className="text-white" />
+          <Bot size={24} className="text-white" />
         </button>
       )}
 
@@ -61,25 +68,27 @@ export default function AITimeline() {
       <div
         className={`
           fixed
-          bottom-28
-          left-8
+          bottom-24
+          left-6
 
           z-40
 
           flex
           flex-col
 
-          w-[430px]
-          h-[520px]
+          w-[390px]
+          h-[440px]
 
           rounded-2xl
 
           border
-          border-slate-700
+          border-amber-500/20
 
-          bg-slate-900
+          bg-[#121722]/95
+          backdrop-blur-xl
 
           shadow-2xl
+          shadow-black/90
 
           origin-bottom-left
 
@@ -94,16 +103,16 @@ export default function AITimeline() {
         `}
       >
         {/* Header */}
-        <div className="flex items-center justify-between border-b border-slate-700 px-5 py-4">
-          <div className="flex items-center gap-3">
-            <div className="rounded-xl bg-violet-600 p-2">
-              <Sparkles className="text-white" size={18} />
+        <div className="flex items-center justify-between border-b border-slate-800/80 px-4 py-3 shrink-0">
+          <div className="flex items-center gap-2.5">
+            <div className="rounded-lg bg-gradient-to-r from-amber-500 to-amber-600 p-1.5 shadow-sm">
+              <Sparkles className="text-slate-950" size={16} />
             </div>
 
             <div>
-              <h2 className="font-semibold text-white">AI Assistant</h2>
+              <h2 className="font-bold text-white text-xs tracking-wide">AI Timeline Console</h2>
 
-              <p className="text-xs text-slate-400">Voice Execution Console</p>
+              <p className="text-[10px] text-slate-400">Live Voice Agent Reasoning</p>
             </div>
           </div>
 
@@ -111,7 +120,7 @@ export default function AITimeline() {
             onClick={() => setOpen(false)}
             className="
               rounded-lg
-              p-2
+              p-1.5
 
               text-slate-400
 
@@ -121,22 +130,22 @@ export default function AITimeline() {
               hover:text-white
             "
           >
-            <X size={18} />
+            <X size={16} />
           </button>
         </div>
 
         {/* Timeline */}
-        <div className="flex-1 overflow-y-auto p-4 space-y-3">
+        <div className="flex-1 overflow-y-auto p-3.5 space-y-2.5 custom-scrollbar">
           {timeline.map((item) => (
             <TimelineItem key={item.id} item={item} />
           ))}
         </div>
 
         {/* Footer */}
-        <div className="border-t border-slate-700 px-5 py-3">
+        <div className="border-t border-slate-800/80 px-4 py-2.5 shrink-0 bg-[#0E121B]">
           <div className="flex items-center justify-between">
-            <span className="text-xs text-slate-500">
-              {timeline.length} event(s)
+            <span className="text-[11px] text-slate-400 font-medium">
+              {timeline.length} event(s) logged
             </span>
 
             <button
@@ -144,21 +153,24 @@ export default function AITimeline() {
               className="
                 rounded-lg
 
-                bg-violet-600
+                bg-slate-800
+                border
+                border-slate-700/60
 
                 px-3
-                py-2
+                py-1.5
 
-                text-sm
-                font-medium
-                text-white
+                text-xs
+                font-semibold
+                text-slate-200
 
                 transition
 
-                hover:bg-violet-700
+                hover:bg-slate-700
+                hover:text-white
               "
             >
-              Close
+              Minimize
             </button>
           </div>
         </div>

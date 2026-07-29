@@ -4,25 +4,30 @@ export default function PinPad({ onPress, onClear, onBackspace, onEnter }) {
   const buttons = ["1", "2", "3", "4", "5", "6", "7", "8", "9"];
 
   return (
-    <div className="grid grid-cols-3 gap-3">
+    <div className="grid grid-cols-3 gap-2.5">
       {buttons.map((num) => (
         <button
           key={num}
           onClick={() => onPress(num)}
           className="
-            h-16
-            rounded-lg
+            h-13
+            rounded-xl
             border
-            border-slate-500
-            bg-slate-800
-            text-xl
-            text-white
+            border-slate-700/60
+            bg-slate-800/70
+            text-lg
+            font-semibold
+            text-slate-100
+
+            shadow-sm
 
             transition-all
-            duration-200
+            duration-150
 
-            hover:bg-blue-600
-            hover:border-blue-600
+            hover:bg-amber-500/20
+            hover:border-amber-500/50
+            hover:text-amber-300
+            active:scale-[0.97]
           "
         >
           {num}
@@ -32,16 +37,24 @@ export default function PinPad({ onPress, onClear, onBackspace, onEnter }) {
       <button
         onClick={onClear}
         className="
-          h-16
-          rounded-lg
-          bg-red-600
+          h-13
+          rounded-xl
+          bg-gradient-to-r
+          from-rose-700
+          to-red-600
+          text-xs
+          font-bold
           text-white
-          font-medium
+          tracking-wider
+          shadow-md
+          shadow-rose-950/40
 
           transition-all
-          duration-200
+          duration-150
 
-          hover:bg-red-700
+          hover:from-rose-600
+          hover:to-red-500
+          active:scale-[0.97]
         "
       >
         CLR
@@ -50,19 +63,24 @@ export default function PinPad({ onPress, onClear, onBackspace, onEnter }) {
       <button
         onClick={() => onPress("0")}
         className="
-          h-16
-          rounded-lg
+          h-13
+          rounded-xl
           border
-          border-slate-500
-          bg-slate-800
-          text-xl
-          text-white
+          border-slate-700/60
+          bg-slate-800/70
+          text-lg
+          font-semibold
+          text-slate-100
+
+          shadow-sm
 
           transition-all
-          duration-200
+          duration-150
 
-          hover:bg-blue-600
-          hover:border-blue-600
+          hover:bg-amber-500/20
+          hover:border-amber-500/50
+          hover:text-amber-300
+          active:scale-[0.97]
         "
       >
         0
@@ -71,15 +89,23 @@ export default function PinPad({ onPress, onClear, onBackspace, onEnter }) {
       <button
         onClick={onBackspace}
         className="
-          h-16
-          rounded-lg
-          bg-slate-300
-          text-xl
+          h-13
+          rounded-xl
+          border
+          border-slate-700/60
+          bg-slate-800/70
+          text-sm
+          font-bold
+          text-slate-300
+
+          shadow-sm
 
           transition-all
-          duration-200
+          duration-150
 
-          hover:bg-slate-400
+          hover:bg-slate-700
+          hover:text-white
+          active:scale-[0.97]
         "
       >
         ⌫
@@ -89,18 +115,29 @@ export default function PinPad({ onPress, onClear, onBackspace, onEnter }) {
         onClick={onEnter}
         className="
           col-span-3
-          h-16
-          rounded-lg
+          h-13
+          rounded-xl
 
-          bg-blue-600
-          text-lg
-          font-semibold
+          bg-gradient-to-r
+          from-emerald-600
+          via-teal-600
+          to-emerald-500
+          text-xs
+          font-extrabold
           text-white
+          tracking-widest
+          uppercase
+
+          shadow-lg
+          shadow-emerald-950/50
 
           transition-all
-          duration-200
+          duration-150
 
-          hover:bg-blue-700
+          hover:from-emerald-500
+          hover:to-teal-400
+          hover:shadow-emerald-900/60
+          active:scale-[0.98]
         "
       >
         ENTER

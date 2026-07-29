@@ -44,6 +44,18 @@ const speechService = {
 
     const utterance = new SpeechSynthesisUtterance(text);
 
+    utterance.onstart = () => {
+      usePosStore.getState().setIsSpeaking(true);
+    };
+
+    utterance.onend = () => {
+      usePosStore.getState().setIsSpeaking(false);
+    };
+
+    utterance.onerror = () => {
+      usePosStore.getState().setIsSpeaking(false);
+    };
+
     // Voice Settings
     utterance.rate = 1;
     utterance.pitch = 1;
@@ -75,6 +87,7 @@ const speechService = {
     }
 
     window.speechSynthesis.cancel();
+    usePosStore.getState().setIsSpeaking(false);
   },
 
   /**

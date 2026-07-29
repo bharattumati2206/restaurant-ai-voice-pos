@@ -1,14 +1,26 @@
 import usePosStore from "@/store/usePosStore";
 
 const orderService = {
-  addItem(item) {
+  addItem(item, selectedModifiers = [], customPrice = null) {
     const { cart, setCart } = usePosStore.getState();
 
-    const existing = cart.find((x) => x.id === item.id);
+    const price = customPrice !== null ? customPrice : item.price;
+    const modifierText =
+      selectedModifiers.length > 0
+        ? selectedModifiers
+            .map((m) => `${m.group}: ${m.option}`)
+            .join(", ")
+        : "";
+
+    const cartKey = modifierText ? `${item.id}-${modifierText}` : `${item.id}`;
+
+    const existing = cart.find(
+      (x) => x.cartKey === cartKey || (!x.cartKey && x.id === item.id && !modifierText),
+    );
 
     if (existing) {
       const updatedCart = cart.map((x) =>
-        x.id === item.id
+        (x.cartKey === cartKey || (!x.cartKey && x.id === item.id && !modifierText))
           ? {
               ...x,
               quantity: x.quantity + 1,
@@ -17,7 +29,6 @@ const orderService = {
       );
 
       setCart(updatedCart);
-
       return;
     }
 
@@ -25,21 +36,27 @@ const orderService = {
       ...cart,
       {
         ...item,
+        cartKey,
+        price,
+        selectedModifiers,
+        modifierText,
         quantity: 1,
       },
     ]);
   },
 
-  removeItem(itemId) {
+  removeItem(targetKey) {
     const { cart, setCart } = usePosStore.getState();
 
-    const existing = cart.find((x) => x.id === itemId);
+    const existing = cart.find(
+      (x) => x.cartKey === targetKey || x.id === targetKey,
+    );
 
     if (!existing) return;
 
     if (existing.quantity > 1) {
       const updatedCart = cart.map((x) =>
-        x.id === itemId
+        (x.cartKey === targetKey || x.id === targetKey)
           ? {
               ...x,
               quantity: x.quantity - 1,
@@ -48,11 +65,10 @@ const orderService = {
       );
 
       setCart(updatedCart);
-
       return;
     }
 
-    setCart(cart.filter((x) => x.id !== itemId));
+    setCart(cart.filter((x) => x.cartKey !== targetKey && x.id !== targetKey));
   },
 
   clear() {

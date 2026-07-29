@@ -1,12 +1,11 @@
 "use client";
 
 import { useMemo, useState } from "react";
-
 import usePosStore from "../../store/usePosStore";
 import paymentService from "../../services/paymentService";
 import { closeCheck, hasOpenChecks } from "../../services/checkService";
 import { updateTableStatus } from "../../services/tableService";
-import { ArrowLeft, CreditCard, CheckCircle2, QrCode } from "lucide-react";
+import { ArrowLeft, CreditCard, CheckCircle2, QrCode, Receipt } from "lucide-react";
 
 const TAX_PERCENTAGE = 5;
 
@@ -15,9 +14,10 @@ export default function CheckoutScreen() {
   const navigate = usePosStore((s) => s.navigate);
   const addTimeline = usePosStore((s) => s.addTimeline);
   const check = usePosStore((s) => s.selectedCheckoutCheck);
+  const currentEmployee = usePosStore((s) => s.currentEmployee);
 
   const subtotal = useMemo(() => {
-    if (!check) {
+    if (!check || !check.items) {
       return 0;
     }
 
@@ -40,7 +40,7 @@ export default function CheckoutScreen() {
   };
 
   const handlePayment = async () => {
-    if (processing) return;
+    if (processing || !check) return;
 
     setProcessing(true);
 
@@ -59,58 +59,108 @@ export default function CheckoutScreen() {
     navigate("TABLES");
   };
 
-  return (
-    <div className="min-h-screen bg-slate-950 px-10 py-8 text-white">
-      {/* Header */}
+  const formattedTime = useMemo(() => {
+    if (!check?.createdAt) return "Just Now";
+    try {
+      return new Date(check.createdAt).toLocaleTimeString([], {
+        hour: "2-digit",
+        minute: "2-digit",
+      });
+    } catch (e) {
+      return "Now";
+    }
+  }, [check]);
 
-      <div className="mb-8 flex items-center justify-between">
+  return (
+    <div className="h-screen bg-[#07090E] p-3.5 text-white flex flex-col overflow-hidden select-none">
+      {/* Header */}
+      <div className="mb-3 flex items-center justify-between border-b border-amber-500/20 pb-2.5 shrink-0 bg-[#0F141C] px-4 py-2.5 rounded-xl">
         <button
           onClick={handleCancel}
-          className="flex items-center gap-2 rounded-lg border border-slate-700 px-4 py-2 transition hover:bg-slate-800"
+          className="flex items-center gap-1.5 rounded-lg border border-slate-700 bg-slate-800/80 px-3 py-1.5 text-xs font-semibold transition hover:bg-slate-700 hover:text-white"
         >
-          <ArrowLeft size={18} />
-          Back
+          <ArrowLeft size={15} />
+          Back to Floor Map
         </button>
 
-        <div className="flex items-center gap-3">
-          <CreditCard className="text-green-400" />
-
-          <h1 className="text-3xl font-bold">Payment</h1>
+        <div className="flex items-center gap-2.5">
+          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-r from-amber-500 to-amber-600 text-slate-950 shadow-sm">
+            <CreditCard size={18} />
+          </div>
+          <div>
+            <h1 className="text-base font-extrabold text-white tracking-wide">Checkout & Payment</h1>
+            <p className="text-[10px] text-amber-400 font-semibold">Darden Restaurant POS</p>
+          </div>
         </div>
 
-        <div />
+        <div className="text-right">
+          <span className="text-[10px] text-slate-400 block font-medium">Cashier</span>
+          <span className="text-xs font-bold text-amber-300">
+            {currentEmployee?.name || "Server"}
+          </span>
+        </div>
       </div>
 
-      <div className="grid grid-cols-2 gap-8">
-        {/* Left */}
+      {/* Main Grid */}
+      <div className="grid flex-1 grid-cols-2 gap-3.5 overflow-hidden min-h-0">
+        {/* Left Column: Check Details */}
+        <div className="flex flex-col rounded-xl border border-amber-500/20 bg-[#121722]/95 p-4 shadow-2xl overflow-hidden">
+          {/* Check Number & Table Header Card */}
+          <div className="flex items-center justify-between border-b border-amber-500/20 pb-3 mb-3 shrink-0 bg-[#171E2C] p-3 rounded-xl">
+            <div>
+              <div className="flex items-center gap-2">
+                <Receipt size={16} className="text-amber-400" />
+                <h2 className="text-sm font-extrabold text-white tracking-wide">
+                  {check?.tableName ?? "No Table"}
+                </h2>
+                {check?.id && (
+                  <span className="rounded-full bg-amber-500/20 border border-amber-500/30 px-2.5 py-0.5 text-xs font-bold text-amber-300">
+                    Check #{check.id.slice(-4)}
+                  </span>
+                )}
+              </div>
 
-        <div className="rounded-xl border border-slate-800 bg-slate-900 p-6">
-          <h2 className="mb-4 text-xl font-semibold">
-            {check?.tableName ?? "No Table"}
-          </h2>
+              {check?.id && (
+                <p className="mt-1 text-[11px] text-slate-400 font-medium">
+                  Full Check ID: <span className="text-slate-200 font-mono font-bold">{check.id}</span>
+                </p>
+              )}
+            </div>
 
-          <div className="space-y-3">
-            {!check || check.items.length === 0 ? (
-              <p className="text-slate-400">No items in current order.</p>
+            <div className="text-right text-[11px]">
+              <p><span className="text-slate-400">Server:</span> <span className="text-amber-300 font-bold">{check?.employeeName || currentEmployee?.name || "Server"}</span></p>
+              <p><span className="text-slate-400">Time:</span> <span className="text-slate-200 font-semibold">{formattedTime}</span></p>
+            </div>
+          </div>
+
+          {/* Items List */}
+          <div className="flex-1 space-y-2 overflow-y-auto pr-1 custom-scrollbar">
+            {!check || !check.items || check.items.length === 0 ? (
+              <p className="text-xs text-slate-400">No items in current check.</p>
             ) : (
-              check.items.map((item) => (
+              check.items.map((item, idx) => (
                 <div
-                  key={item.id}
-                  className="flex items-center justify-between border-b border-slate-800 pb-3"
+                  key={idx}
+                  className="flex items-center justify-between border-b border-slate-800/80 pb-2 text-xs bg-[#182030]/50 p-2 rounded-lg"
                 >
                   <div>
-                    <p className="flex items-center gap-2 font-medium">
+                    <p className="flex items-center gap-1.5 font-bold text-white">
                       {item.name}
-
-                      <span className="rounded bg-slate-700 px-2 py-0.5 text-xs text-slate-200">
+                      <span className="rounded bg-amber-500/20 border border-amber-500/30 px-1.5 py-0.5 text-[10px] font-extrabold text-amber-300">
                         × {item.quantity}
                       </span>
                     </p>
 
-                    <p className="text-sm text-slate-400">{item.category}</p>
+                    {item.modifierText && (
+                      <p className="mt-0.5 text-[10px] text-amber-300/90 italic leading-snug">
+                        {item.modifierText}
+                      </p>
+                    )}
+
+                    <p className="text-[10px] text-slate-400">{item.category}</p>
                   </div>
 
-                  <span className="font-semibold text-emerald-400">
+                  <span className="font-extrabold text-emerald-400">
                     ${(item.price * item.quantity).toFixed(2)}
                   </span>
                 </div>
@@ -118,53 +168,58 @@ export default function CheckoutScreen() {
             )}
           </div>
 
-          <div className="mt-8 space-y-3 border-t border-slate-700 pt-5">
+          {/* Totals Section */}
+          <div className="mt-3 space-y-1.5 border-t border-amber-500/20 pt-2.5 text-xs shrink-0 bg-[#0E131C] p-3 rounded-xl">
             <div className="flex justify-between">
-              <span className="text-slate-300">Subtotal</span>
-
-              <span className="font-medium">${subtotal.toFixed(2)}</span>
+              <span className="text-slate-400 font-medium">Subtotal</span>
+              <span className="font-bold text-white">${subtotal.toFixed(2)}</span>
             </div>
 
             <div className="flex justify-between">
-              <span className="text-slate-300">Tax ({TAX_PERCENTAGE}%)</span>
-
-              <span className="font-medium">${tax.toFixed(2)}</span>
+              <span className="text-slate-400 font-medium">Tax ({TAX_PERCENTAGE}%)</span>
+              <span className="font-bold text-white">${tax.toFixed(2)}</span>
             </div>
 
-            <div className="flex justify-between border-t border-slate-700 pt-3 text-2xl font-bold">
-              <span>Total</span>
-
+            <div className="flex justify-between border-t border-slate-800 pt-2 text-base font-extrabold">
+              <span className="text-white">Total Due</span>
               <span className="text-emerald-400">${total.toFixed(2)}</span>
             </div>
           </div>
         </div>
 
-        {/* Right */}
+        {/* Right Column: QR Payment Action */}
+        <div className="flex flex-col justify-between rounded-xl border border-amber-500/20 bg-[#121722]/95 p-4 shadow-2xl overflow-hidden">
+          <div>
+            <div className="text-center mb-3">
+              <h2 className="text-sm font-extrabold text-white tracking-wide">
+                Scan QR Code to Pay
+              </h2>
+              <p className="text-[11px] text-slate-400">
+                Supports UPI, Credit/Debit, Apple Pay
+              </p>
+            </div>
 
-        <div className="rounded-xl border border-slate-800 bg-slate-900 p-6">
-          <h2 className="mb-8 text-center text-xl font-semibold">
-            Scan to Pay
-          </h2>
+            <div className="mx-auto flex h-48 w-48 items-center justify-center rounded-xl bg-white p-3 shadow-xl border-2 border-amber-400/40">
+              <QrCode size={140} color="black" />
+            </div>
 
-          <div className="mx-auto flex h-72 w-72 items-center justify-center rounded-xl bg-white">
-            <QrCode size={180} color="black" />
+            <div className="mt-4 bg-[#171E2C] p-3 rounded-xl border border-slate-800 text-center">
+              <span className="text-[11px] text-slate-400 block font-medium">Payment Amount</span>
+              <span className="text-xl font-extrabold text-emerald-400">${total.toFixed(2)}</span>
+            </div>
           </div>
 
-          <p className="mt-6 text-center text-slate-400">
-            Customer scans the QR code to complete payment.
-          </p>
-
           <button
-            disabled={processing || !check || check.items.length === 0}
+            disabled={processing || !check || !check.items || check.items.length === 0}
             onClick={handlePayment}
-            className="mt-10 flex w-full items-center justify-center gap-2 rounded-lg bg-green-600 py-4 text-lg font-semibold transition hover:bg-green-700 disabled:cursor-not-allowed disabled:opacity-50"
+            className="mt-3 flex w-full items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-emerald-600 via-teal-600 to-emerald-500 py-3 text-sm font-bold text-white shadow-xl shadow-emerald-950/50 transition hover:from-emerald-500 hover:to-teal-400 active:scale-95 disabled:cursor-not-allowed disabled:opacity-50 border border-emerald-400/30"
           >
             {processing ? (
-              <>Processing...</>
+              <>Processing Payment...</>
             ) : (
               <>
-                <CheckCircle2 size={20} />
-                Pay
+                <CheckCircle2 size={18} />
+                Complete Payment (${total.toFixed(2)})
               </>
             )}
           </button>

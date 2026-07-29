@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { LogOut, Clock3, User } from "lucide-react";
+import { LogOut, Clock3, User, ReceiptText } from "lucide-react";
 import usePosStore from "@/store/usePosStore";
 import { initializeTables, getTables } from "../../services/tableService";
 import { initializeChecks, getChecks } from "../../services/checkService";
@@ -24,14 +24,23 @@ export default function TableScreen() {
   const selectedCheckTable = usePosStore((s) => s.selectedCheckTable);
   const navigate = usePosStore((s) => s.navigate);
   const [selectedCheckId, setSelectedCheckId] = useState(null);
+  const [selectedClosedCheckId, setSelectedClosedCheckId] = useState(null);
+  const selectedOpenCheckId = usePosStore((s) => s.selectedOpenCheckId);
+  const setSelectedOpenCheckId = usePosStore((s) => s.setSelectedOpenCheckId);
   const setSelectedCheckoutCheck = usePosStore(
     (s) => s.setSelectedCheckoutCheck,
   );
+
+  useEffect(() => {
+    if (selectedOpenCheckId) {
+      setSelectedCheckId(selectedOpenCheckId);
+    }
+  }, [selectedOpenCheckId]);
   const activeClass =
-    "rounded-xl bg-emerald-600 px-5 py-2 font-semibold text-white transition-all";
+    "rounded-xl bg-gradient-to-r from-amber-500 to-amber-600 px-4 py-1.5 text-xs font-bold text-slate-950 shadow-md shadow-amber-950/40 transition-all";
 
   const normalClass =
-    "rounded-xl bg-slate-800 px-5 py-2 font-semibold text-slate-300 transition-all hover:bg-slate-700";
+    "rounded-xl bg-[#141A26]/80 border border-slate-700/50 px-4 py-1.5 text-xs font-semibold text-slate-300 transition-all hover:bg-slate-800 hover:text-white";
 
   useEffect(() => {
     initializeTables();
@@ -55,7 +64,6 @@ export default function TableScreen() {
   }, []);
 
   useEffect(() => {
-    console.log("TableScreen useEffect");
     if (currentScreen !== "TABLES") {
       return;
     }
@@ -92,9 +100,6 @@ export default function TableScreen() {
     if (checks.length === 0) {
       setSelectedCheckId(null);
 
-      // If we were viewing a specific table,
-      // return to the Tables tab because there
-      // are no more open checks.
       if (selectedCheckTable) {
         setActiveTableTab("TABLES");
       }
@@ -123,46 +128,61 @@ export default function TableScreen() {
     });
 
     setClosedChecks(checks);
+
+    if (checks.length > 0) {
+      const exists = checks.some((check) => check.id === selectedClosedCheckId);
+      if (!exists) {
+        setSelectedClosedCheckId(checks[0].id);
+      }
+    } else {
+      setSelectedClosedCheckId(null);
+    }
   };
 
+  const selectedOpenCheck = openChecks.find((c) => c.id === selectedCheckId);
+  const selectedClosedCheck = closedChecks.find((c) => c.id === selectedClosedCheckId);
+
   return (
-    <div className="min-h-screen bg-slate-950">
+    <div className="h-screen bg-gradient-to-b from-[#0F141C] via-[#0A0D14] to-[#07090E] flex flex-col overflow-hidden select-none">
       {/* Header */}
 
-      <header className="h-20 border-b border-slate-700 bg-slate-900 px-8 flex items-center justify-between shadow-lg">
+      <header className="h-16 border-b border-amber-500/10 bg-[#121722]/80 backdrop-blur-md px-6 flex items-center justify-between shadow-lg shrink-0">
         {/* Left */}
 
-        <div>
-          <h1 className="text-2xl font-bold tracking-wide text-white">
-            Restaurant AI POS
-          </h1>
+        <div className="flex items-center gap-3">
+          <div className="h-8 w-1 bg-gradient-to-b from-amber-400 to-amber-600 rounded-full" />
+          <div>
+            <h1 className="text-transparent bg-clip-text bg-gradient-to-r from-amber-200 via-amber-400 to-amber-100 text-lg font-extrabold tracking-wider uppercase">
+              Restaurant AI POS
+            </h1>
 
-          <p className="text-sm text-slate-400">Dining Tables</p>
+            <p className="text-[11px] text-slate-400 font-medium">Floor Dining & Open Checks</p>
+          </div>
         </div>
 
         {/* Right */}
 
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-3">
           {/* Time */}
 
-          <div className="rounded-xl border border-slate-700 bg-slate-800 px-4 py-2">
-            <div className="flex items-center gap-2 text-xs uppercase tracking-wider text-slate-400">
-              <Clock3 size={14} />
+          <div className="rounded-lg border border-slate-800 bg-[#0B0E14] px-3 py-1.5">
+            <div className="flex items-center gap-1.5 text-[10px] uppercase tracking-widest text-amber-400/80 font-bold">
+              <Clock3 size={12} />
               Time
             </div>
 
-            <div className="mt-1 font-semibold text-white">{time}</div>
+            <div className="mt-0.5 text-xs font-bold text-slate-200">{time}</div>
           </div>
 
           {/* Cashier */}
 
-          <div className="rounded-xl bg-yellow-600 px-5 py-2 shadow-md">
-            <div className="flex items-center gap-2 text-xs uppercase tracking-wider text-yellow-100">
-              <User size={14} />
+          <div className="rounded-lg bg-amber-500/20 border border-amber-500/30 px-3.5 py-1.5 shadow-sm">
+            <div className="flex items-center gap-1.5 text-[10px] uppercase tracking-widest text-amber-300 font-bold">
+              <User size={12} />
               Cashier
             </div>
 
-            <div className="mt-1 text-lg font-bold text-white">
+            <div className="mt-0.5 text-xs font-extrabold text-amber-100">
               {employee?.name ?? "--"}
             </div>
           </div>
@@ -174,26 +194,30 @@ export default function TableScreen() {
             className="
               flex
               items-center
-              gap-2
+              gap-1.5
 
-              rounded-xl
+              rounded-lg
 
               border
-              border-red-500
+              border-rose-500/40
+              bg-rose-500/10
 
-              px-4
-              py-3
+              px-3
+              py-2
 
-              text-red-400
+              text-xs
+              font-bold
+              text-rose-300
 
               transition-all
               duration-200
 
-              hover:bg-red-600
+              hover:bg-rose-600
               hover:text-white
+              active:scale-95
             "
           >
-            <LogOut size={18} />
+            <LogOut size={14} />
             Logout
           </button>
         </div>
@@ -201,17 +225,17 @@ export default function TableScreen() {
 
       {/* Content */}
 
-      <div className="p-8">
-        <div className="mb-8 flex items-center justify-between">
+      <div className="flex-1 flex flex-col p-5 overflow-hidden">
+        <div className="mb-4 flex items-center justify-between shrink-0">
           <div>
-            <h2 className="text-3xl font-bold text-white">Select a Table</h2>
+            <h2 className="text-2xl font-bold text-white">Select a Table</h2>
 
-            <p className="mt-1 text-slate-400">
+            <p className="text-xs text-slate-400">
               Choose a table to begin ordering
             </p>
           </div>
 
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2">
             <button
               onClick={() => setActiveTableTab("TABLES")}
               className={
@@ -246,7 +270,7 @@ export default function TableScreen() {
         </div>
 
         {activeTableTab === "TABLES" && (
-          <div className="grid grid-cols-4 gap-6">
+          <div className="grid grid-cols-4 gap-4 overflow-y-auto pr-1">
             {tableList.map((table) => (
               <TableCard
                 key={table.id}
@@ -278,175 +302,349 @@ export default function TableScreen() {
         )}
 
         {activeTableTab === "OPEN_CHECKS" && (
-          <div className="rounded-2xl bg-slate-900 p-6 shadow-xl">
-            {/* Header */}
-            <div className="mb-6 flex items-center justify-between">
-              <div>
-                <h2 className="text-2xl font-bold text-white">
-                  {selectedCheckTable
-                    ? `${selectedCheckTable.name} - Open Checks`
-                    : "All Open Checks"}
-                </h2>
+          <div className="flex-1 grid grid-cols-10 gap-4 overflow-hidden max-h-[460px]">
+            {/* Left 30% - Check Details Panel */}
+            <div className="col-span-3 flex flex-col rounded-2xl bg-slate-900/90 border border-slate-800 p-4 shadow-xl overflow-hidden">
+              {selectedOpenCheck ? (
+                <div className="flex flex-col h-full overflow-hidden">
+                  <div className="border-b border-slate-800 pb-3 shrink-0">
+                    <div className="flex items-center justify-between">
+                      <span className="text-xs font-semibold text-slate-400">
+                        {selectedOpenCheck.tableName}
+                      </span>
+                      <span className="rounded-full bg-emerald-600/20 px-2 py-0.5 text-[10px] font-bold text-emerald-400">
+                        OPEN
+                      </span>
+                    </div>
+                    <h3 className="text-xs font-bold text-white mt-1">
+                      {selectedOpenCheck.id}
+                    </h3>
+                    <p className="text-[11px] text-slate-400 mt-0.5">
+                      Created:{" "}
+                      {new Date(selectedOpenCheck.createdAt).toLocaleTimeString(
+                        [],
+                        { hour: "2-digit", minute: "2-digit" },
+                      )}
+                    </p>
+                  </div>
 
-                <p className="mt-1 text-sm text-slate-400">
-                  {openChecks.length} Open Check(s)
-                </p>
-              </div>
+                  <div className="flex-1 overflow-y-auto my-3 space-y-1.5 pr-1 custom-scrollbar">
+                    <p className="text-[11px] font-semibold text-slate-400 uppercase tracking-wider mb-1">
+                      Ordered Items ({selectedOpenCheck.items?.length || 0})
+                    </p>
+                    {selectedOpenCheck.items?.map((item, idx) => (
+                      <div
+                        key={idx}
+                        className="flex items-center justify-between rounded-lg border border-slate-800/80 bg-slate-800/40 p-2 text-xs"
+                      >
+                        <div>
+                          <p className="font-medium text-white">{item.name}</p>
+                          <p className="text-[11px] text-slate-400">
+                            ₹{item.price} × {item.quantity}
+                          </p>
+                        </div>
+                        <span className="font-semibold text-emerald-400 text-xs">
+                          ₹{(item.price * item.quantity).toFixed(2)}
+                        </span>
+                      </div>
+                    ))}
+                  </div>
 
-              {selectedCheckTable && (
-                <button
-                  onClick={() => {
-                    orderService.clear();
-                    selectTable(selectedCheckTable);
-                  }}
-                  className="rounded-xl bg-emerald-600 px-5 py-3 font-semibold text-white hover:bg-emerald-700"
-                >
-                  + New Check
-                </button>
+                  <div className="border-t border-slate-800 pt-2 text-xs shrink-0 space-y-1">
+                    <div className="flex justify-between text-slate-400 text-[11px]">
+                      <span>Subtotal</span>
+                      <span className="text-slate-200">
+                        ₹{selectedOpenCheck.total?.toFixed(2)}
+                      </span>
+                    </div>
+                    <div className="flex justify-between text-slate-400 text-[11px]">
+                      <span>Tax (5%)</span>
+                      <span className="text-slate-200">
+                        ₹{(selectedOpenCheck.total * 0.05).toFixed(2)}
+                      </span>
+                    </div>
+                    <div className="flex justify-between font-bold text-xs text-white border-t border-slate-800/60 pt-1.5 mt-1">
+                      <span>Total</span>
+                      <span className="text-emerald-400">
+                        ₹{(selectedOpenCheck.total * 1.05).toFixed(2)}
+                      </span>
+                    </div>
+
+                    <button
+                      onClick={() => {
+                        setSelectedCheckoutCheck(selectedOpenCheck);
+                        navigate("CHECKOUT");
+                      }}
+                      className="mt-2 w-full rounded-lg bg-emerald-600 py-2 text-xs font-bold text-white hover:bg-emerald-500 shadow-md transition"
+                    >
+                      Proceed to Pay / Close
+                    </button>
+                  </div>
+                </div>
+              ) : (
+                <div className="flex flex-col items-center justify-center h-full text-center p-4">
+                  <ReceiptText className="text-slate-700 mb-2" size={36} />
+                  <p className="text-xs font-bold text-slate-300">
+                    No Check Selected
+                  </p>
+                  <p className="text-[11px] text-slate-500 mt-1">
+                    Click an open check from the list to view order details.
+                  </p>
+                </div>
               )}
             </div>
 
-            {openChecks.length > 0 ? (
-              <table className="w-full">
-                <thead>
-                  <tr className="text-left text-sm uppercase tracking-wide text-slate-400">
-                    <th className="pb-4">Check ID</th>
-                    <th className="pb-4">Created</th>
-                    <th className="pb-4">Items</th>
-                    <th className="pb-4">Total</th>
-                    <th className="pb-4">Status</th>
-                  </tr>
-                </thead>
+            {/* Right 70% - Checks List Table */}
+            <div className="col-span-7 flex flex-col rounded-2xl bg-slate-900/90 border border-slate-800 p-4 shadow-xl overflow-hidden">
+              <div className="mb-3 flex items-center justify-between shrink-0">
+                <div>
+                  <h2 className="text-lg font-bold text-white">
+                    {selectedCheckTable
+                      ? `${selectedCheckTable.name} - Open Checks`
+                      : "All Open Checks"}
+                  </h2>
+                  <p className="mt-0.5 text-xs text-slate-400">
+                    {openChecks.length} Open Check(s)
+                  </p>
+                </div>
 
-                <tbody>
-                  {openChecks.map((check) => (
-                    <tr
-                      key={check.id}
-                      onClick={() => setSelectedCheckId(check.id)}
-                      className={`
-cursor-pointer transition
+                {selectedCheckTable && (
+                  <button
+                    onClick={() => {
+                      orderService.clear();
+                      selectTable(selectedCheckTable);
+                    }}
+                    className="rounded-lg bg-emerald-600 px-3 py-1.5 text-xs font-semibold text-white hover:bg-emerald-500"
+                  >
+                    + New Check
+                  </button>
+                )}
+              </div>
 
-${
-  selectedCheckId === check.id
-    ? "bg-blue-600/20 border-l-4 border-blue-500"
-    : "hover:bg-slate-800"
-}
-`}
-                    >
-                      <td className="py-4 font-semibold text-white">
-                        {check.id}
-                      </td>
+              {openChecks.length > 0 ? (
+                <div className="flex-1 overflow-y-auto pr-2 custom-scrollbar">
+                  <table className="w-full text-left text-xs">
+                    <thead className="sticky top-0 bg-slate-900 z-10">
+                      <tr className="uppercase tracking-wide text-slate-400 border-b border-slate-800">
+                        <th className="pb-2.5">Check ID</th>
+                        <th className="pb-2.5">Created</th>
+                        <th className="pb-2.5">Items</th>
+                        <th className="pb-2.5">Total</th>
+                        <th className="pb-2.5">Action</th>
+                      </tr>
+                    </thead>
 
-                      <td className="py-4 text-slate-300">
-                        {new Date(check.createdAt).toLocaleTimeString([], {
-                          hour: "2-digit",
-                          minute: "2-digit",
-                        })}
-                      </td>
+                    <tbody className="divide-y divide-slate-800/60">
+                      {openChecks.map((check) => (
+                        <tr
+                          key={check.id}
+                          onClick={() => setSelectedCheckId(check.id)}
+                          className={`
+  cursor-pointer transition
 
-                      <td className="py-4 text-slate-300">
-                        {check.items.length}
-                      </td>
+  ${selectedCheckId === check.id
+                              ? "bg-blue-600/20 border-l-4 border-blue-500"
+                              : "hover:bg-slate-800/60"
+                            }
+  `}
+                        >
+                          <td className="py-2.5 font-semibold text-white">
+                            {check.id}
+                          </td>
 
-                      <td className="py-4 font-semibold text-emerald-400">
-                        ₹{check.total.toFixed(2)}
-                      </td>
+                          <td className="py-2.5 text-slate-300">
+                            {new Date(check.createdAt).toLocaleTimeString([], {
+                              hour: "2-digit",
+                              minute: "2-digit",
+                            })}
+                          </td>
 
-                      <td className="py-4">
-                        <div className="flex items-center gap-3">
-                          <span className="rounded-full bg-emerald-600/20 px-3 py-1 text-xs font-semibold text-emerald-400">
-                            OPEN
-                          </span>
+                          <td className="py-2.5 text-slate-300">
+                            {check.items.length} item(s)
+                          </td>
 
-                          {selectedCheckId === check.id && (
+                          <td className="py-2.5 font-semibold text-emerald-400">
+                            ₹{check.total.toFixed(2)}
+                          </td>
+
+                          <td className="py-2.5">
                             <button
                               onClick={(e) => {
                                 e.stopPropagation();
-
-                                const check = openChecks.find(
-                                  (c) => c.id === selectedCheckId,
-                                );
-
-                                if (!check) {
-                                  return;
-                                }
-
+                                setSelectedCheckId(check.id);
                                 setSelectedCheckoutCheck(check);
-
                                 navigate("CHECKOUT");
                               }}
-                              className="rounded-lg bg-red-600 px-3 py-1 text-xs font-semibold text-white hover:bg-red-700"
+                              className="rounded-md bg-red-600/90 px-2.5 py-1 text-[11px] font-semibold text-white hover:bg-red-600"
                             >
                               Close
                             </button>
-                          )}
-                        </div>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            ) : (
-              <div className="py-10 text-center text-slate-500">
-                No open checks found.
-              </div>
-            )}
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              ) : (
+                <div className="py-12 text-center text-xs text-slate-500">
+                  No open checks found.
+                </div>
+              )}
+            </div>
           </div>
         )}
 
         {activeTableTab === "CLOSED_CHECKS" && (
-          <div className="rounded-2xl bg-slate-900 p-6 shadow-xl">
-            <div className="mb-6">
-              <h2 className="text-2xl font-bold text-white">Closed Checks</h2>
+          <div className="flex-1 grid grid-cols-10 gap-4 overflow-hidden max-h-[460px]">
+            {/* Left 30% - Closed Check Details Panel */}
+            <div className="col-span-3 flex flex-col rounded-2xl bg-slate-900/90 border border-slate-800 p-4 shadow-xl overflow-hidden">
+              {selectedClosedCheck ? (
+                <div className="flex flex-col h-full overflow-hidden">
+                  <div className="border-b border-slate-800 pb-3 shrink-0">
+                    <div className="flex items-center justify-between">
+                      <span className="text-xs font-semibold text-slate-400">
+                        {selectedClosedCheck.tableName}
+                      </span>
+                      <span className="rounded-full bg-slate-800 px-2 py-0.5 text-[10px] font-bold text-slate-300">
+                        CLOSED
+                      </span>
+                    </div>
+                    <h3 className="text-xs font-bold text-white mt-1">
+                      {selectedClosedCheck.id}
+                    </h3>
+                    <p className="text-[11px] text-slate-400 mt-0.5">
+                      Closed:{" "}
+                      {selectedClosedCheck.closedAt
+                        ? new Date(selectedClosedCheck.closedAt).toLocaleTimeString(
+                          [],
+                          { hour: "2-digit", minute: "2-digit" },
+                        )
+                        : "--"}
+                    </p>
+                  </div>
 
-              <p className="mt-1 text-sm text-slate-400">
-                {closedChecks.length} Closed Check(s)
-              </p>
+                  <div className="flex-1 overflow-y-auto my-3 space-y-1.5 pr-1 custom-scrollbar">
+                    <p className="text-[11px] font-semibold text-slate-400 uppercase tracking-wider mb-1">
+                      Purchased Items ({selectedClosedCheck.items?.length || 0})
+                    </p>
+                    {selectedClosedCheck.items?.map((item, idx) => (
+                      <div
+                        key={idx}
+                        className="flex items-center justify-between rounded-lg border border-slate-800/80 bg-slate-800/40 p-2 text-xs"
+                      >
+                        <div>
+                          <p className="font-medium text-white">{item.name}</p>
+                          <p className="text-[11px] text-slate-400">
+                            ₹{item.price} × {item.quantity}
+                          </p>
+                        </div>
+                        <span className="font-semibold text-emerald-400 text-xs">
+                          ₹{(item.price * item.quantity).toFixed(2)}
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+
+                  <div className="border-t border-slate-800 pt-2 text-xs shrink-0 space-y-1">
+                    <div className="flex justify-between text-slate-400 text-[11px]">
+                      <span>Subtotal</span>
+                      <span className="text-slate-200">
+                        ₹{selectedClosedCheck.total?.toFixed(2)}
+                      </span>
+                    </div>
+                    <div className="flex justify-between text-slate-400 text-[11px]">
+                      <span>Tax (5%)</span>
+                      <span className="text-slate-200">
+                        ₹{(selectedClosedCheck.total * 0.05).toFixed(2)}
+                      </span>
+                    </div>
+                    <div className="flex justify-between font-bold text-xs text-white border-t border-slate-800/60 pt-1.5 mt-1">
+                      <span>Total Paid</span>
+                      <span className="text-emerald-400">
+                        ₹{(selectedClosedCheck.total * 1.05).toFixed(2)}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              ) : (
+                <div className="flex flex-col items-center justify-center h-full text-center p-4">
+                  <ReceiptText className="text-slate-700 mb-2" size={36} />
+                  <p className="text-xs font-bold text-slate-300">
+                    No Check Selected
+                  </p>
+                  <p className="text-[11px] text-slate-500 mt-1">
+                    Click a closed check from the list to view historical items.
+                  </p>
+                </div>
+              )}
             </div>
 
-            {closedChecks.length > 0 ? (
-              <table className="w-full">
-                <thead>
-                  <tr className="text-left text-sm uppercase tracking-wide text-slate-400">
-                    <th className="pb-4">Check ID</th>
-                    <th className="pb-4">Table</th>
-                    <th className="pb-4">Items</th>
-                    <th className="pb-4">Total</th>
-                    <th className="pb-4">Status</th>
-                  </tr>
-                </thead>
-
-                <tbody>
-                  {closedChecks.map((check) => (
-                    <tr key={check.id} className="border-b border-slate-800">
-                      <td className="py-4 font-semibold text-white">
-                        {check.id}
-                      </td>
-
-                      <td className="py-4 text-slate-300">{check.tableName}</td>
-
-                      <td className="py-4 text-slate-300">
-                        {check.items.length}
-                      </td>
-
-                      <td className="py-4 font-semibold text-emerald-400">
-                        ₹{check.total.toFixed(2)}
-                      </td>
-
-                      <td className="py-4">
-                        <span className="rounded-full bg-slate-700 px-3 py-1 text-xs font-semibold text-white">
-                          CLOSED
-                        </span>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            ) : (
-              <div className="py-10 text-center text-slate-500">
-                No closed checks found.
+            {/* Right 70% - Closed Checks List Table */}
+            <div className="col-span-7 flex flex-col rounded-2xl bg-slate-900/90 border border-slate-800 p-4 shadow-xl overflow-hidden">
+              <div className="mb-3 shrink-0">
+                <h2 className="text-lg font-bold text-white">Closed Checks</h2>
+                <p className="mt-0.5 text-xs text-slate-400">
+                  {closedChecks.length} Closed Check(s)
+                </p>
               </div>
-            )}
+
+              {closedChecks.length > 0 ? (
+                <div className="flex-1 overflow-y-auto pr-2 custom-scrollbar">
+                  <table className="w-full text-left text-xs">
+                    <thead className="sticky top-0 bg-slate-900 z-10">
+                      <tr className="uppercase tracking-wide text-slate-400 border-b border-slate-800">
+                        <th className="pb-2.5">Check ID</th>
+                        <th className="pb-2.5">Table</th>
+                        <th className="pb-2.5">Items</th>
+                        <th className="pb-2.5">Total</th>
+                        <th className="pb-2.5">Status</th>
+                      </tr>
+                    </thead>
+
+                    <tbody className="divide-y divide-slate-800/60">
+                      {closedChecks.map((check) => (
+                        <tr
+                          key={check.id}
+                          onClick={() => setSelectedClosedCheckId(check.id)}
+                          className={`
+  cursor-pointer transition
+
+  ${selectedClosedCheckId === check.id
+                              ? "bg-slate-800/80 border-l-4 border-slate-400"
+                              : "hover:bg-slate-800/40"
+                            }
+  `}
+                        >
+                          <td className="py-2.5 font-semibold text-white">
+                            {check.id}
+                          </td>
+
+                          <td className="py-2.5 text-slate-300">{check.tableName}</td>
+
+                          <td className="py-2.5 text-slate-300">
+                            {check.items.length} item(s)
+                          </td>
+
+                          <td className="py-2.5 font-semibold text-emerald-400">
+                            ₹{check.total.toFixed(2)}
+                          </td>
+
+                          <td className="py-2.5">
+                            <span className="rounded-full bg-slate-800 px-2.5 py-0.5 text-[11px] font-semibold text-slate-300">
+                              CLOSED
+                            </span>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              ) : (
+                <div className="py-12 text-center text-xs text-slate-500">
+                  No closed checks found.
+                </div>
+              )}
+            </div>
           </div>
         )}
       </div>

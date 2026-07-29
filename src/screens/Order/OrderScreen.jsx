@@ -7,11 +7,11 @@ import Cart from "./Cart";
 
 export default function OrderScreen() {
   return (
-    <div className="h-full bg-[#111827] text-white flex flex-col">
+    <div className="h-full bg-[#0A0D14] text-white flex flex-col">
       <OrderHeader />
 
-      <div className="flex-1 overflow-hidden p-5 pb-2">
-        <div className="grid h-full grid-cols-12 gap-5">
+      <div className="flex-1 overflow-hidden p-1.5">
+        <div className="grid h-full grid-cols-12 gap-1.5">
           <div className="col-span-3 min-h-0">
             <Cart />
           </div>

@@ -14,9 +14,9 @@ export function initializeTables() {
     status: "AVAILABLE",
   }));
 
-  initialTables.find((t) => t.id === 4).status = "DIRTY";
-  initialTables.find((t) => t.id === 7).status = "DIRTY";
-  initialTables.find((t) => t.id === 12).status = "DIRTY";
+  initialTables.find((t) => t.id === 4).status = "Not Ready";
+  initialTables.find((t) => t.id === 7).status = "Not Ready";
+  initialTables.find((t) => t.id === 12).status = "Not Ready";
 
   localStorage.setItem(STORAGE_KEY, JSON.stringify(initialTables));
 }

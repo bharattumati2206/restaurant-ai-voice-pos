@@ -23,8 +23,11 @@ const styles = {
   },
 };
 
+// Default style for unknown/undefined statuses
+const defaultStyle = styles.AVAILABLE;
+
 export default function TableCard({ table, onClick }) {
-  const style = styles[table.status];
+  const style = styles[table.status] || defaultStyle;
 
   return (
     <button

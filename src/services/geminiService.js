@@ -81,32 +81,21 @@ async function askOpenRouter(prompt) {
 /* -------------------------------------------------------------------------- */
 
 async function askGroq(prompt) {
-  const response = await fetch(
-    "https://api.groq.com/openai/v1/chat/completions",
-    {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${process.env.NEXT_PUBLIC_GEMINI_API_KEY}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        model: process.env.NEXT_PUBLIC_GROQ_MODEL || "llama-3.3-70b-versatile",
+  const model = process.env.NEXT_PUBLIC_GROQ_MODEL || "llama-3.3-70b-versatile";
 
-        messages: [
-          {
-            role: "user",
-            content: prompt,
-          },
-        ],
-      }),
+  const response = await fetch("/api/groq", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
     },
-  );
-
-  if (!response.ok) {
-    throw new Error(await response.text());
-  }
+    body: JSON.stringify({ prompt, model }),
+  });
 
   const data = await response.json();
 
-  return data.choices[0].message.content;
+  if (!response.ok) {
+    throw new Error(data?.error || "Groq request failed");
+  }
+
+  return data.text;
 }

@@ -56,7 +56,7 @@ export default function useVoice() {
 
         addTimeline(`Heard: "${transcript}"`, "success");
 
-        addTimeline("🧠 Gemini AI Processing...", "thinking");
+        addTimeline("🧠 AI Processing...", "thinking");
 
         const setIsAiProcessing = usePosStore.getState().setIsAiProcessing;
         setIsAiProcessing(true);

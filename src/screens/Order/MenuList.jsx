@@ -25,7 +25,7 @@ export default function MenuList() {
   };
 
   return (
-    <div className="flex h-full flex-col rounded-xl border border-amber-500/20 bg-[#121722]/95 shadow-2xl p-2.5 overflow-hidden relative">
+    <div className="flex h-full flex-col rounded-xl border border-amber-500/20 bg-[#262d3f]/95 shadow-2xl p-2.5 overflow-hidden relative">
       {customizingItem ? (
         /* In-Place Sub-Items / Modifiers View */
         <ItemModifierSubView

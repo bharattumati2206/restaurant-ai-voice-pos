@@ -84,7 +84,7 @@ export default function AITimeline() {
           border
           border-amber-500/20
 
-          bg-[#121722]/95
+          bg-[#262d3f]/95
           backdrop-blur-xl
 
           shadow-2xl
@@ -142,7 +142,7 @@ export default function AITimeline() {
         </div>
 
         {/* Footer */}
-        <div className="border-t border-slate-800/80 px-4 py-2.5 shrink-0 bg-[#0E121B]">
+        <div className="border-t border-slate-700/80 px-4 py-2.5 shrink-0 bg-[#202536]">
           <div className="flex items-center justify-between">
             <span className="text-[11px] text-slate-400 font-medium">
               {timeline.length} event(s) logged

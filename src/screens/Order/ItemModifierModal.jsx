@@ -72,9 +72,9 @@ export default function ItemModifierModal({ item, onClose }) {
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/75 backdrop-blur-sm p-4 select-none animate-fadeIn">
-      <div className="flex max-h-[85vh] w-[460px] flex-col rounded-2xl border border-amber-500/30 bg-[#121722] text-white shadow-2xl overflow-hidden">
+      <div className="flex max-h-[85vh] w-[460px] flex-col rounded-2xl border border-amber-500/30 bg-[#262d3f] text-white shadow-2xl overflow-hidden">
         {/* Modal Header */}
-        <div className="flex items-center justify-between border-b border-amber-500/20 bg-[#171E2C] px-5 py-3.5 shrink-0">
+        <div className="flex items-center justify-between border-b border-amber-500/20 bg-[#2e3749] px-5 py-3.5 shrink-0">
           <div className="flex items-center gap-2.5">
             <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-amber-500/20 border border-amber-500/30 text-amber-400">
               <Sparkles size={16} />
@@ -96,7 +96,7 @@ export default function ItemModifierModal({ item, onClose }) {
         {/* Modal Body / Modifier Groups */}
         <div className="flex-1 overflow-y-auto p-5 space-y-4 custom-scrollbar">
           {item.description && (
-            <p className="text-xs text-slate-300 leading-relaxed bg-[#0B0E14] p-3 rounded-xl border border-slate-800">
+            <p className="text-xs text-slate-300 leading-relaxed bg-[#1c2130] p-3 rounded-xl border border-slate-700">
               {item.description}
             </p>
           )}
@@ -136,7 +136,7 @@ export default function ItemModifierModal({ item, onClose }) {
                       className={`flex items-center justify-between rounded-xl border p-3 text-xs font-semibold transition-all ${
                         isSelected
                           ? "border-amber-500/80 bg-gradient-to-r from-amber-500/20 to-amber-500/5 text-amber-300 shadow-sm"
-                          : "border-slate-800 bg-[#182030]/60 text-slate-300 hover:border-slate-700 hover:bg-[#1B2436]"
+                          : "border-slate-700 bg-[#313a4d]/60 text-slate-300 hover:border-slate-600 hover:bg-[#3a4459]"
                       }`}
                     >
                       <div className="flex items-center gap-2.5">
@@ -166,7 +166,7 @@ export default function ItemModifierModal({ item, onClose }) {
         </div>
 
         {/* Modal Footer */}
-        <div className="flex items-center justify-between border-t border-slate-800 bg-[#0E131C] px-5 py-3.5 shrink-0">
+        <div className="flex items-center justify-between border-t border-slate-700 bg-[#202536] px-5 py-3.5 shrink-0">
           <div>
             <span className="text-[11px] text-slate-400 block font-medium">Total Item Price</span>
             <span className="text-lg font-extrabold text-emerald-400">

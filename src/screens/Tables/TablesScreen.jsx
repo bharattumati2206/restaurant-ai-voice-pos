@@ -40,7 +40,7 @@ export default function TableScreen() {
     "rounded-xl bg-gradient-to-r from-amber-500 to-amber-600 px-4 py-1.5 text-xs font-bold text-slate-950 shadow-md shadow-amber-950/40 transition-all";
 
   const normalClass =
-    "rounded-xl bg-[#141A26]/80 border border-slate-700/50 px-4 py-1.5 text-xs font-semibold text-slate-300 transition-all hover:bg-slate-800 hover:text-white";
+    "rounded-xl bg-[#2a3245]/80 border border-slate-700/50 px-4 py-1.5 text-xs font-semibold text-slate-300 transition-all hover:bg-slate-700 hover:text-white";
 
   useEffect(() => {
     initializeTables();
@@ -145,10 +145,10 @@ export default function TableScreen() {
   );
 
   return (
-    <div className="h-screen bg-gradient-to-b from-[#0F141C] via-[#0A0D14] to-[#07090E] flex flex-col overflow-hidden select-none">
+    <div className="h-screen bg-gradient-to-b from-[#232839] via-[#1e2334] to-[#1a1f2e] flex flex-col overflow-hidden select-none">
       {/* Header */}
 
-      <header className="h-16 border-b border-amber-500/10 bg-[#121722]/80 backdrop-blur-md px-6 flex items-center justify-between shadow-lg shrink-0">
+      <header className="h-16 border-b border-amber-500/10 bg-[#262d3f]/80 backdrop-blur-md px-6 flex items-center justify-between shadow-lg shrink-0">
         {/* Left */}
 
         <div className="flex items-center gap-3">
@@ -169,7 +169,7 @@ export default function TableScreen() {
         <div className="flex items-center gap-3">
           {/* Time */}
 
-          <div className="rounded-lg border border-slate-800 bg-[#0B0E14] px-3 py-1.5">
+          <div className="rounded-lg border border-slate-700 bg-[#1c2130] px-3 py-1.5">
             <div className="flex items-center gap-1.5 text-[10px] uppercase tracking-widest text-amber-400/80 font-bold">
               <Clock3 size={12} />
               Time

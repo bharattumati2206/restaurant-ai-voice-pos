@@ -50,10 +50,10 @@ export default function LoginScreen() {
   };
 
   return (
-    <div className="h-screen bg-gradient-to-b from-[#0F141C] via-[#0A0D14] to-[#07090E] flex flex-col overflow-hidden select-none">
+    <div className="h-screen bg-gradient-to-b from-[#232839] via-[#1e2334] to-[#1a1f2e] flex flex-col overflow-hidden select-none">
       {/* Header */}
 
-      <header className="h-16 border-b border-amber-500/10 bg-[#121722]/80 backdrop-blur-md flex items-center justify-between px-6 shrink-0 shadow-lg">
+      <header className="h-16 border-b border-amber-500/10 bg-[#262d3f]/80 backdrop-blur-md flex items-center justify-between px-6 shrink-0 shadow-lg">
         <div className="flex items-center gap-3">
           <div className="h-8 w-1 bg-gradient-to-b from-amber-400 to-amber-600 rounded-full" />
           <div>
@@ -75,7 +75,7 @@ export default function LoginScreen() {
       {/* Login Card */}
 
       <div className="flex-1 flex justify-center items-center p-6">
-        <div className="w-[350px] rounded-2xl bg-[#141A26]/80 backdrop-blur-xl shadow-2xl shadow-black/80 border border-amber-500/15 p-6">
+        <div className="w-[350px] rounded-2xl bg-[#2a3245]/80 backdrop-blur-xl shadow-2xl shadow-black/80 border border-amber-500/15 p-6">
           <div className="text-center mb-5">
             <h2 className="text-xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-white via-slate-100 to-slate-300 tracking-wide">
               Server Login
@@ -97,7 +97,7 @@ export default function LoginScreen() {
                 rounded-xl
                 border
                 border-amber-500/30
-                bg-[#0B0E14]
+                bg-[#1c2130]
                 text-center
                 text-2xl
                 font-extrabold

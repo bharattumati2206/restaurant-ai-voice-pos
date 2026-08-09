@@ -37,7 +37,7 @@ export default function CategoryList() {
   const setSelectedCategory = usePosStore((state) => state.setSelectedCategory);
 
   return (
-    <div className="flex h-full flex-col rounded-xl border border-amber-500/20 bg-[#121722]/95 shadow-2xl p-2.5 overflow-hidden">
+    <div className="flex h-full flex-col rounded-xl border border-amber-500/20 bg-[#262d3f]/95 shadow-2xl p-2.5 overflow-hidden">
       <div className="mb-2 shrink-0 pb-1.5 border-b border-amber-500/15">
         <h2 className="text-xs font-extrabold text-white tracking-wide uppercase">Categories</h2>
 
@@ -57,7 +57,7 @@ export default function CategoryList() {
               className={`group w-full rounded-xl border p-2 transition-all duration-200 ${
                 active
                   ? "border-amber-500/80 bg-gradient-to-r from-amber-500/25 via-amber-500/10 to-transparent shadow-md shadow-amber-950/40 text-amber-300"
-                  : "border-slate-800/80 bg-[#182030]/60 text-slate-400 hover:border-slate-700 hover:bg-[#1C2538] hover:text-white"
+                  : "border-slate-700/80 bg-[#313a4d]/60 text-slate-400 hover:border-slate-600 hover:bg-[#3a4459] hover:text-white"
               }`}
             >
               <div className="flex items-center gap-2">

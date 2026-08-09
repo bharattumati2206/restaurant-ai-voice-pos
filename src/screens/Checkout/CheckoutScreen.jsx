@@ -72,9 +72,9 @@ export default function CheckoutScreen() {
   }, [check]);
 
   return (
-    <div className="h-screen bg-[#07090E] p-3.5 text-white flex flex-col overflow-hidden select-none">
+    <div className="h-screen bg-[#1a1f2e] p-3.5 text-white flex flex-col overflow-hidden select-none">
       {/* Header */}
-      <div className="mb-3 flex items-center justify-between border-b border-amber-500/20 pb-2.5 shrink-0 bg-[#0F141C] px-4 py-2.5 rounded-xl">
+      <div className="mb-3 flex items-center justify-between border-b border-amber-500/20 pb-2.5 shrink-0 bg-[#232839] px-4 py-2.5 rounded-xl">
         <button
           onClick={handleCancel}
           className="flex items-center gap-1.5 rounded-lg border border-slate-700 bg-slate-800/80 px-3 py-1.5 text-xs font-semibold transition hover:bg-slate-700 hover:text-white"
@@ -104,9 +104,9 @@ export default function CheckoutScreen() {
       {/* Main Grid */}
       <div className="grid flex-1 grid-cols-2 gap-3.5 overflow-hidden min-h-0">
         {/* Left Column: Check Details */}
-        <div className="flex flex-col rounded-xl border border-amber-500/20 bg-[#121722]/95 p-4 shadow-2xl overflow-hidden">
+        <div className="flex flex-col rounded-xl border border-amber-500/20 bg-[#262d3f]/95 p-4 shadow-2xl overflow-hidden">
           {/* Check Number & Table Header Card */}
-          <div className="flex items-center justify-between border-b border-amber-500/20 pb-3 mb-3 shrink-0 bg-[#171E2C] p-3 rounded-xl">
+          <div className="flex items-center justify-between border-b border-amber-500/20 pb-3 mb-3 shrink-0 bg-[#2e3749] p-3 rounded-xl">
             <div>
               <div className="flex items-center gap-2">
                 <Receipt size={16} className="text-amber-400" />
@@ -141,7 +141,7 @@ export default function CheckoutScreen() {
               check.items.map((item, idx) => (
                 <div
                   key={idx}
-                  className="flex items-center justify-between border-b border-slate-800/80 pb-2 text-xs bg-[#182030]/50 p-2 rounded-lg"
+                  className="flex items-center justify-between border-b border-slate-700/80 pb-2 text-xs bg-[#313a4d]/50 p-2 rounded-lg"
                 >
                   <div>
                     <p className="flex items-center gap-1.5 font-bold text-white">
@@ -169,7 +169,7 @@ export default function CheckoutScreen() {
           </div>
 
           {/* Totals Section */}
-          <div className="mt-3 space-y-1.5 border-t border-amber-500/20 pt-2.5 text-xs shrink-0 bg-[#0E131C] p-3 rounded-xl">
+          <div className="mt-3 space-y-1.5 border-t border-amber-500/20 pt-2.5 text-xs shrink-0 bg-[#202536] p-3 rounded-xl">
             <div className="flex justify-between">
               <span className="text-slate-400 font-medium">Subtotal</span>
               <span className="font-bold text-white">${subtotal.toFixed(2)}</span>
@@ -188,7 +188,7 @@ export default function CheckoutScreen() {
         </div>
 
         {/* Right Column: QR Payment Action */}
-        <div className="flex flex-col justify-between rounded-xl border border-amber-500/20 bg-[#121722]/95 p-4 shadow-2xl overflow-hidden">
+        <div className="flex flex-col justify-between rounded-xl border border-amber-500/20 bg-[#262d3f]/95 p-4 shadow-2xl overflow-hidden">
           <div>
             <div className="text-center mb-3">
               <h2 className="text-sm font-extrabold text-white tracking-wide">
@@ -203,7 +203,7 @@ export default function CheckoutScreen() {
               <QrCode size={140} color="black" />
             </div>
 
-            <div className="mt-4 bg-[#171E2C] p-3 rounded-xl border border-slate-800 text-center">
+            <div className="mt-4 bg-[#2e3749] p-3 rounded-xl border border-slate-700 text-center">
               <span className="text-[11px] text-slate-400 block font-medium">Payment Amount</span>
               <span className="text-xl font-extrabold text-emerald-400">${total.toFixed(2)}</span>
             </div>

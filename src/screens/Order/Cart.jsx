@@ -21,10 +21,10 @@ export default function Cart() {
   const setActiveTableTab = usePosStore((state) => state.setActiveTableTab);
 
   return (
-    <div className="flex h-full flex-col rounded-xl border border-amber-500/20 bg-[#121722]/95 shadow-2xl shadow-black/80 overflow-hidden">
+    <div className="flex h-full flex-col rounded-xl border border-amber-500/20 bg-[#262d3f]/95 shadow-2xl shadow-black/80 overflow-hidden">
       {/* Header */}
 
-      <div className="border-b border-amber-500/20 p-2.5 shrink-0 bg-[#171E2C]">
+      <div className="border-b border-amber-500/20 p-2.5 shrink-0 bg-[#2e3749]">
         <div className="flex items-center gap-2.5">
           <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-r from-amber-500 to-amber-600 shadow-sm text-slate-950">
             <ShoppingCart size={16} />
@@ -58,7 +58,7 @@ export default function Cart() {
           return (
             <div
               key={itemKey}
-              className="rounded-lg border border-slate-800 bg-[#182030]/80 p-2.5 shadow-sm"
+              className="rounded-lg border border-slate-700 bg-[#313a4d]/80 p-2.5 shadow-sm"
             >
               <div className="flex items-start justify-between text-xs">
                 <div>
@@ -119,7 +119,7 @@ export default function Cart() {
 
       {/* Footer */}
 
-      <div className="border-t border-amber-500/20 p-2.5 shrink-0 bg-[#0E131C]">
+      <div className="border-t border-amber-500/20 p-2.5 shrink-0 bg-[#202536]">
         <div className="mb-2.5 flex items-center justify-between">
           <span className="text-xs text-slate-400 font-medium">Total</span>
 

@@ -10,13 +10,13 @@ export default function MenuItemCard({ item, onSelect }) {
         rounded-xl
         border
         border-amber-500/20
-        bg-[#182030]/80
+        bg-[#313a4d]/80
         backdrop-blur-md
         p-3.5
         transition-all
         duration-200
         hover:border-amber-400/60
-        hover:bg-[#202B40]
+        hover:bg-[#3a4459]
         hover:shadow-lg
         hover:shadow-amber-950/30
         hover:-translate-y-0.5

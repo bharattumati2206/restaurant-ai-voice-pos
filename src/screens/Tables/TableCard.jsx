@@ -43,7 +43,7 @@ export default function TableCard({ table, onClick }) {
 
         ${style.border}
 
-        bg-[#141A26]/80
+        bg-[#2a3245]/80
         backdrop-blur-md
 
         p-4

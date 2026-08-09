@@ -92,7 +92,7 @@ export default function ItemModifierSubView({ item, onBack }) {
       {/* Body: Sub-item Modifier Options */}
       <div className="flex-1 overflow-y-auto py-3 space-y-4 pr-1 custom-scrollbar">
         {item.description && (
-          <p className="text-xs text-slate-300 leading-relaxed bg-[#0B0E14] p-3 rounded-xl border border-slate-800">
+          <p className="text-xs text-slate-300 leading-relaxed bg-[#1c2130] p-3 rounded-xl border border-slate-700">
             {item.description}
           </p>
         )}
@@ -131,7 +131,7 @@ export default function ItemModifierSubView({ item, onBack }) {
                     className={`flex items-center justify-between rounded-xl border p-3 text-xs font-semibold transition-all ${
                       isSelected
                         ? "border-amber-500/80 bg-gradient-to-r from-amber-500/20 via-amber-500/10 to-transparent text-amber-300 shadow-md"
-                        : "border-slate-800 bg-[#182030]/60 text-slate-300 hover:border-slate-700 hover:bg-[#1B2436]"
+                        : "border-slate-700 bg-[#313a4d]/60 text-slate-300 hover:border-slate-600 hover:bg-[#3a4459]"
                     }`}
                   >
                     <div className="flex items-center gap-2">
@@ -161,7 +161,7 @@ export default function ItemModifierSubView({ item, onBack }) {
       </div>
 
       {/* Footer / Confirm */}
-      <div className="flex items-center justify-between border-t border-slate-800 pt-3 shrink-0 bg-[#141A26]">
+      <div className="flex items-center justify-between border-t border-slate-700 pt-3 shrink-0 bg-[#2a3245]">
         <div>
           <span className="text-[11px] text-slate-400 block font-medium">Total Item Price</span>
           <span className="text-lg font-extrabold text-emerald-400">

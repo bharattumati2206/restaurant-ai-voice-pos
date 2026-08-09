@@ -16,7 +16,7 @@ export default function OrderHeader() {
   });
 
   return (
-    <header className="h-16 border-b border-amber-500/10 bg-[#121722]/80 backdrop-blur-md px-6 flex items-center justify-between shadow-lg shrink-0 select-none">
+    <header className="h-16 border-b border-amber-500/10 bg-[#262d3f]/80 backdrop-blur-md px-6 flex items-center justify-between shadow-lg shrink-0 select-none">
       {/* Logo */}
 
       <div className="flex items-center gap-3">
@@ -40,7 +40,7 @@ export default function OrderHeader() {
       <div className="flex items-center gap-3">
         {/* Live Time */}
 
-        <div className="rounded-lg border border-slate-800 bg-[#0B0E14] px-3 py-1.5">
+        <div className="rounded-lg border border-slate-700 bg-[#1c2130] px-3 py-1.5">
           <div className="flex items-center gap-1.5 text-[10px] uppercase tracking-widest text-amber-400/80 font-bold">
             <Clock3 size={12} />
             Time

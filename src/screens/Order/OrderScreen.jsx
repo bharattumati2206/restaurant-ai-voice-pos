@@ -7,7 +7,7 @@ import Cart from "./Cart";
 
 export default function OrderScreen() {
   return (
-    <div className="h-full bg-[#0A0D14] text-white flex flex-col">
+    <div className="h-full bg-[#1e2334] text-white flex flex-col">
       <OrderHeader />
 
       <div className="flex-1 overflow-hidden p-1.5">

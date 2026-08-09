@@ -325,7 +325,21 @@ Arguments
 
 CLOSE_CHECK
 
-Use when the user asks to close table X, close check for table X, checkout table X, select check 2345, open check 2345, choose check ending 2345, select last check, select first check, open latest check, or open oldest check.
+Use when the user asks to:
+- close table X (with specific table number)
+- close check for table X (with specific table)
+- checkout table X (with specific table)
+- select check 2345 (with specific check ID)
+- open check 2345 (with specific check ID)
+- choose check ending 2345 (with specific check ID)
+- select last check (with modifier)
+- select first check (with modifier)
+- open latest check (with modifier)
+- open oldest check (with modifier)
+- proceed to checkout for table X
+- go to checkout for this check
+
+Note: For generic "proceed to payment", "checkout", "pay this check" (without specific table/check ID), use PAY tool instead.
 
 Arguments
 
@@ -987,6 +1001,20 @@ Use when the user says:
 - confirm payment
 - charge customer
 - pay bill
+- proceed to payment
+- proceed to payment and close
+- make payment and close
+- close this check
+- close the check
+- pay this check
+- pay this
+- pay and close
+- close and pay
+- process payment
+- settle the bill
+- settle this
+- close it
+- close this
 
 Arguments:
 {}
@@ -1151,6 +1179,104 @@ ADD_ITEM
 CHECKOUT
 
 PAY
+
+--------------------------------------------------
+
+User:
+proceed to payment and close
+
+Response:
+
+{
+  "steps":[
+    {
+      "tool":"PAY",
+      "arguments":{}
+    }
+  ]
+}
+
+--------------------------------------------------
+
+User:
+make payment and close
+
+Response:
+
+{
+  "steps":[
+    {
+      "tool":"PAY",
+      "arguments":{}
+    }
+  ]
+}
+
+--------------------------------------------------
+
+User:
+close this check
+
+Response:
+
+{
+  "steps":[
+    {
+      "tool":"PAY",
+      "arguments":{}
+    }
+  ]
+}
+
+--------------------------------------------------
+
+User:
+pay this check
+
+Response:
+
+{
+  "steps":[
+    {
+      "tool":"PAY",
+      "arguments":{}
+    }
+  ]
+}
+
+--------------------------------------------------
+
+User:
+can you please proceed to payment
+
+Response:
+
+{
+  "steps":[
+    {
+      "tool":"PAY",
+      "arguments":{}
+    }
+  ]
+}
+
+--------------------------------------------------
+
+User:
+proceed to checkout
+
+Response:
+
+{
+  "steps":[
+    {
+      "tool":"CHECKOUT",
+      "arguments":{}
+    }
+  ]
+}
+
+--------------------------------------------------
 
 User Command:
 

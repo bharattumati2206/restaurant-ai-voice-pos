@@ -634,6 +634,32 @@ export async function executePlan(plan) {
 
         let matchedChecks = [...allOpenChecks];
 
+        // PRIORITY 1: If user has a check currently selected in UI (selectedOpenCheckId),
+        // and no specific checkId is provided in the command, use the selected check directly
+        const hasSpecificCheckId = step.arguments?.checkId;
+        const hasSpecificTable = step.arguments?.table;
+        const hasModifier = step.arguments?.modifier;
+        
+        if (!hasSpecificCheckId && !hasModifier && currentState.selectedOpenCheckId) {
+          const selectedCheck = allOpenChecks.find(
+            (c) => c.id === currentState.selectedOpenCheckId
+          );
+          
+          if (selectedCheck) {
+            // Use the currently selected check directly
+            currentState.setSelectedCheckoutCheck(selectedCheck);
+            currentState.navigate("CHECKOUT");
+
+            speechService.announce({
+              timeline: `✅ Checkout ready for ${selectedCheck.tableName} (${selectedCheck.id}).`,
+              speech: `You're all set. Let me open up checkout for the selected check.`,
+              type: "success",
+            });
+
+            break;
+          }
+        }
+
         // Filter by table if specified or currently selected
         const tableId =
           step.arguments?.table ??
@@ -724,7 +750,43 @@ export async function executePlan(plan) {
 
         const currentState = usePosStore.getState();
 
+        // PRIORITY 1: If user has a check currently selected in UI (selectedOpenCheckId), use it directly
+        if (currentState.selectedOpenCheckId) {
+          const allOpen = getChecks().filter((c) => c.status === "OPEN");
+          const selectedCheck = allOpen.find(
+            (c) => c.id === currentState.selectedOpenCheckId
+          );
+          
+          if (selectedCheck) {
+            currentState.setSelectedCheckoutCheck(selectedCheck);
+            currentState.navigate("CHECKOUT");
+
+            speechService.announce({
+              timeline: `✅ Checkout ready for ${selectedCheck.tableName}.`,
+              speech: "Checkout is ready for the selected check.",
+              type: "success",
+            });
+
+            break;
+          }
+        }
+
         if (!currentState.selectedTable) {
+          // Check if there's any open check at all
+          const allOpen = getChecks().filter((c) => c.status === "OPEN");
+          if (allOpen.length > 0) {
+            currentState.setSelectedCheckoutCheck(allOpen[0]);
+            currentState.navigate("CHECKOUT");
+
+            speechService.announce({
+              timeline: "✅ Checkout screen opened.",
+              speech: "Checkout is ready.",
+              type: "success",
+            });
+
+            break;
+          }
+
           speechService.announce({
             timeline: "❌ Please open a table first.",
             speech: "Please open a table first.",
@@ -790,7 +852,21 @@ export async function executePlan(plan) {
 
         let check = state.selectedCheckoutCheck;
 
-        // If no checkout check currently selected, try finding active open check for selectedTable or latest open check
+        // PRIORITY 1: If user has a check currently selected in UI (selectedOpenCheckId), use it
+        if (!check || !check.items || check.items.length === 0) {
+          if (state.selectedOpenCheckId) {
+            const allOpen = getChecks().filter((c) => c.status === "OPEN");
+            const selectedCheck = allOpen.find(
+              (c) => c.id === state.selectedOpenCheckId
+            );
+            if (selectedCheck) {
+              check = selectedCheck;
+              state.setSelectedCheckoutCheck(selectedCheck);
+            }
+          }
+        }
+
+        // PRIORITY 2: If no checkout check currently selected, try finding active open check for selectedTable or latest open check
         if (!check || !check.items || check.items.length === 0) {
           const allOpen = getChecks().filter((c) => c.status === "OPEN");
           if (state.selectedTable) {

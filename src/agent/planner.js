@@ -326,9 +326,14 @@ Arguments
 CLOSE_CHECK
 
 Use when the user asks to:
-- close table X (with specific table number)
+- close this check
+- close the check
+- close the selected check
 - close check for table X (with specific table)
+- close table X (with specific table number)
 - checkout table X (with specific table)
+- close check ending in 2345 (with specific check ID)
+- close check 2345 (with specific check ID)
 - select check 2345 (with specific check ID)
 - open check 2345 (with specific check ID)
 - choose check ending 2345 (with specific check ID)
@@ -336,10 +341,10 @@ Use when the user asks to:
 - select first check (with modifier)
 - open latest check (with modifier)
 - open oldest check (with modifier)
-- proceed to checkout for table X
-- go to checkout for this check
-
-Note: For generic "proceed to payment", "checkout", "pay this check" (without specific table/check ID), use PAY tool instead.
+- can you please close this check
+- please close this check
+- close it
+- close this
 
 Arguments
 
@@ -1004,17 +1009,14 @@ Use when the user says:
 - proceed to payment
 - proceed to payment and close
 - make payment and close
-- close this check
-- close the check
 - pay this check
 - pay this
 - pay and close
-- close and pay
 - process payment
 - settle the bill
 - settle this
-- close it
-- close this
+
+Note: For "close this check", "close the check", "close it" use CLOSE_CHECK tool instead.
 
 Arguments:
 {}
@@ -1222,7 +1224,7 @@ Response:
 {
   "steps":[
     {
-      "tool":"PAY",
+      "tool":"CLOSE_CHECK",
       "arguments":{}
     }
   ]
@@ -1239,6 +1241,38 @@ Response:
   "steps":[
     {
       "tool":"PAY",
+      "arguments":{}
+    }
+  ]
+}
+
+--------------------------------------------------
+
+User:
+can you please close this check
+
+Response:
+
+{
+  "steps":[
+    {
+      "tool":"CLOSE_CHECK",
+      "arguments":{}
+    }
+  ]
+}
+
+--------------------------------------------------
+
+User:
+close the selected check
+
+Response:
+
+{
+  "steps":[
+    {
+      "tool":"CLOSE_CHECK",
       "arguments":{}
     }
   ]

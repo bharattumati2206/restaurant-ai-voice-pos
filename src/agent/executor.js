@@ -646,13 +646,35 @@ export async function executePlan(plan) {
           );
           
           if (selectedCheck) {
-            // Use the currently selected check directly
+            // Use the currently selected check - process payment and close
+            speechService.announce({
+              timeline: `💳 Processing payment for ${selectedCheck.tableName}...`,
+              speech: `Processing payment for the selected check.`,
+              type: "thinking",
+            });
+
             currentState.setSelectedCheckoutCheck(selectedCheck);
             currentState.navigate("CHECKOUT");
 
+            // Process payment
+            await paymentService.pay();
+
+            // Close the check
+            closeCheck(selectedCheck.id);
+
+            // Free the table if no more open checks
+            if (!hasOpenChecks(selectedCheck.tableId)) {
+              updateTableStatus(selectedCheck.tableId, "AVAILABLE");
+            }
+
+            // Clear and navigate back to tables
+            currentState.setSelectedCheckoutCheck(null);
+            currentState.setSelectedOpenCheckId(null);
+            currentState.navigate("TABLES");
+
             speechService.announce({
-              timeline: `✅ Checkout ready for ${selectedCheck.tableName} (${selectedCheck.id}).`,
-              speech: `You're all set. Let me open up checkout for the selected check.`,
+              timeline: `✅ Payment completed. Check ${selectedCheck.id.slice(-4)} closed.`,
+              speech: `Payment completed successfully. The check for ${selectedCheck.tableName} has been closed.`,
               type: "success",
             });
 
@@ -729,12 +751,35 @@ export async function executePlan(plan) {
 
         const selectedCheck = matchedChecks[0];
 
+        // Process payment and close the check
+        speechService.announce({
+          timeline: `💳 Processing payment for ${selectedCheck.tableName}...`,
+          speech: `Processing payment for check ending in ${selectedCheck.id.slice(-4)}.`,
+          type: "thinking",
+        });
+
         currentState.setSelectedCheckoutCheck(selectedCheck);
         currentState.navigate("CHECKOUT");
 
+        // Process payment
+        await paymentService.pay();
+
+        // Close the check
+        closeCheck(selectedCheck.id);
+
+        // Free the table if no more open checks
+        if (!hasOpenChecks(selectedCheck.tableId)) {
+          updateTableStatus(selectedCheck.tableId, "AVAILABLE");
+        }
+
+        // Clear and navigate back to tables
+        currentState.setSelectedCheckoutCheck(null);
+        currentState.setSelectedOpenCheckId(null);
+        currentState.navigate("TABLES");
+
         speechService.announce({
-          timeline: `✅ Checkout ready for ${selectedCheck.tableName} (${selectedCheck.id}).`,
-          speech: `You're all set. Let me open up checkout for ${selectedCheck.tableName}.`,
+          timeline: `✅ Payment completed. Check ${selectedCheck.id.slice(-4)} closed.`,
+          speech: `Payment completed successfully. The check for ${selectedCheck.tableName} has been closed.`,
           type: "success",
         });
 

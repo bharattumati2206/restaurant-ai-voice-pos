@@ -2,11 +2,13 @@ import { NextResponse } from "next/server";
 import Groq from "groq-sdk";
 
 // Groq models in order of preference (fallback chain)
-// Updated August 2026 - using current stable model IDs
+// Updated August 2026 - using Llama 3.2/3.3 series
 const GROQ_MODELS = [
   "llama-3.3-70b-versatile",
-  "llama3-70b-8192",
-  "llama3-8b-8192",
+  "llama-3.3-70b-specdec",
+  "llama-3.2-90b-vision-preview",
+  "llama-3.2-11b-vision-preview",
+  "llama-3.2-3b-preview",
 ];
 
 export async function POST(request) {
